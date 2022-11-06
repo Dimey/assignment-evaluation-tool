@@ -11,7 +11,7 @@
     {
         "taskTitle": "Aufgabe 2",
         "subTasks":[
-            {"subTaskTitle": "Aufgabe 2.1 Test", "subTaskMaxPoints": 3},
+            {"subTaskTitle": "Aufgabe 2.1", "subTaskMaxPoints": 3},
             {"subTaskTitle": "Aufgabe 2.2", "subTaskMaxPoints": 5},
             {"subTaskTitle": "Aufgabe 2.3", "subTaskMaxPoints": 12},
             {"subTaskTitle": "Aufgabe 2.4", "subTaskMaxPoints": 2}
@@ -20,14 +20,14 @@
     {
         "taskTitle": "Aufgabe 3",
         "subTasks":[
-            {"subTaskTitle": "Aufgabe 3.1 Test Test", "subTaskMaxPoints": 3},
+            {"subTaskTitle": "Aufgabe 3.1", "subTaskMaxPoints": 3},
             {"subTaskTitle": "Aufgabe 3.2", "subTaskMaxPoints": 5}
         ]
     }
 ],
 "penalties": [
     {
-        "penaltyTitle": "Matrikelnummer" 
+        "penaltyTitle": "Matrikelnummervariation" 
     },
     {
         "penaltyTitle": "Pünktlichkeit"

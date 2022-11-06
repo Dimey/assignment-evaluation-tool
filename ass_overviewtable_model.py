@@ -1,6 +1,6 @@
+import pandas as pd
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtCore import Qt
-import pandas as pd
 
 
 class OverviewTableModel(QtCore.QAbstractTableModel):
@@ -17,7 +17,8 @@ class OverviewTableModel(QtCore.QAbstractTableModel):
         return self._data.shape[0]
 
     def columnCount(self, index):
-        return self._data.shape[1]
+        # return self._data.shape[1]
+        return 5  # we will only display the first 5 columns in the ui
 
     def headerData(self, section, orientation, role):
         # section is the index of the column/row.

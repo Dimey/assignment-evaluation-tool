@@ -1,9 +1,5 @@
-import json
-import pandas as pd
-
 from functools import partial
-
-from ass_overviewtable_model import *
+import random
 
 
 class ASSController:
@@ -14,35 +10,34 @@ class ASSController:
         self.view = view
         self.model = model
 
-        self.createOverviewTableModel()
-        self.initializeModel()
-        self.view.createUI(self.contents, self.overviewTableViewModel)
+        # load assignment defining json file
+        self.assignmentDescription = model.loadAssignmentDescription()
+
+        self.overviewTableViewModel = model.createOverviewTableModel(
+            self.assignmentDescription
+        )
+
+        self.view.createUI(self.assignmentDescription, self.overviewTableViewModel)
 
         # Connect signals and slots
         self.connectSignals()
 
-    def createOverviewTableModel(self):
-        json_file_path = "json-mock-data/tasks.json"
-        with open(json_file_path, "r") as j:
-            self.contents = json.loads(j.read())
-        self.data = pd.DataFrame(
-            [], columns=["Nachname", "Vorname", "Abgabe", "Punkte", "Bestanden"]
-        )
-        subTaskCount = 0
-        for task in self.contents["tasks"]:
-            subTaskCount += len(task["subTasks"])
-        columnNames = [f"criteria{idx+1}" for idx in range(subTaskCount)]
-        dataCriteria = pd.DataFrame([], columns=columnNames)
-        self.data.loc[1771189] = ["Haas", "Dimitri", "Ja", 14, "Ja"]
-        self.data.loc[2334334] = ["Wagenbach", "Lars", "Fehler", 0, "Nein"]
-        self.overviewTableViewModel = OverviewTableModel(self.data)
-
-    def initializeModel(self):
-        pass
-
     def connectSignals(self):
-        for idx, lineEdit in enumerate(self.view.lineEditList):
-            lineEdit.editingFinished.connect(partial(self.savePoints, lineEdit, idx))
+        # connect textfields to savePoints method
+        for idx, spinBox in enumerate(self.view.spinBoxList):
+            spinBox.editingFinished.connect(partial(self.savePoints, spinBox, idx))
+
+        # connect load button to add-entry-function
+        self.view.loadButton.clicked.connect(self.addEntry)
+
+    def addEntry(self):
+        # create random integer with 7 digits
+        randomInt = random.randint(1000000, 9999999)
+
+        self.overviewTableViewModel._data.at[1234567, "Criteria 1"] = randomInt
+        self.overviewTableViewModel._data.at[1234567, "Criteria 2"] = randomInt
+        self.overviewTableViewModel.layoutChanged.emit()
+        print(self.overviewTableViewModel._data.loc[1234567])
 
     def savePoints(self, lineEditObj, idx):
         print(f"Save points in QLineEdit Nr.{idx+1}")
