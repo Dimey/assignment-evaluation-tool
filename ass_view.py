@@ -18,7 +18,6 @@ class ASSView(QMainWindow):
         evaluationOverviewLayout = QVBoxLayout()
         twoButtonLayout = QHBoxLayout()
         self.jumpToAssignmentButton = QPushButton("Zur Abgabe")
-        # set icon
         self.jumpToAssignmentButton.setIcon(QIcon("icons/arrowshape.turn.up.forward@4x.png"))
         self.jumpPDFExportButton = QPushButton("PDF Export")
         twoButtonLayout.addWidget(self.jumpToAssignmentButton)
@@ -31,11 +30,13 @@ class ASSView(QMainWindow):
         evaluationOverviewLayout.addWidget(penaltyGroupBox)
 
         self.remarkTextEdit = QPlainTextEdit()
+        # set placeholder text in gray
+        self.remarkTextEdit.setPlaceholderText("Bemerkungen")
         evaluationOverviewLayout.addWidget(self.remarkTextEdit)
-        self.pointsLabel = QLabel(f"Gesamtpunktzahl\n{0} / {30}")
-        self.pointsLabel.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        self.pointsLabel.setStyleSheet("font-weight: bold")
-        evaluationOverviewLayout.addWidget(self.pointsLabel)
+        # self.pointsLabel = QLabel(f"Gesamtpunktzahl\n{0} / {30}")
+        # self.pointsLabel.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        # self.pointsLabel.setStyleSheet("font-weight: bold")
+        # evaluationOverviewLayout.addWidget(self.pointsLabel)
         evaluationOverviewLayout.addLayout(twoButtonLayout)
         # evaluationOverviewLayout.insertSpacing(1,14)
         self.evaluationOverviewGroupBox = QGroupBox("Bewertungsdetails")
@@ -52,7 +53,7 @@ class ASSView(QMainWindow):
         # 3 Buttons below table
         threeButtonLayout = QHBoxLayout()
         self.batchPDFExportButton = QPushButton("Batch-PDF-Export")
-        self.batchPDFExportButton.setIcon(QIcon("icons/square.and.arrow.up.on.square@4x.png"))
+        # self.batchPDFExportButton.setIcon(QIcon("icons/square.and.arrow.up.on.square@4x.png"))
         self.loadButton = QPushButton("Laden")
         self.saveButton = QPushButton("Speichern")
     
@@ -73,18 +74,60 @@ class ASSView(QMainWindow):
         tableAndButtonsLayout.addLayout(threeButtonLayout)
         
         ##### UPPER PART OF UI #####
-        # create 
+        # create hbox containing importgroupbox and statsgroupbox
+        upperLayout = QHBoxLayout()
+        upperLayout.addWidget(self.createImportGroupBox(), stretch=3)
+        
+        # create hbox containing statsgroupbox and a spinbox
+        statsLayout = QVBoxLayout()
+        statsLayout.addWidget(self.createStatsGroupBox())
+        statsLayout.addWidget(self.createPointsSpinBox())
+        # no margins for the statsLayout
+        statsLayout.setContentsMargins(0, 0, 0, 0)
+        
+        upperLayout.addLayout(statsLayout, stretch=1)
+        # create widget
+        upperWidget = QWidget()
+        upperWidget.setLayout(upperLayout)
+        # upperLayout.setStretch(0, 1)
 
         ##### BOTTOM PART OF UI #####
         bottomUILayout = QHBoxLayout()
         bottomUILayout.addLayout(tableAndButtonsLayout, stretch=3)
-        bottomUILayout.addWidget(self.evaluationOverviewGroupBox, stretch=0)
+        bottomUILayout.addWidget(self.evaluationOverviewGroupBox, stretch=1)
         bottomUIWidget = QWidget()
         bottomUIWidget.setLayout(bottomUILayout)
-        self.setCentralWidget(bottomUIWidget)
-
+        
+        # combine bottom and upper part in a vbox and set as central widget
+        mainLayout = QVBoxLayout()
+        mainLayout.addWidget(upperWidget)
+        mainLayout.addWidget(bottomUIWidget)
+        mainWidget = QWidget()
+        mainWidget.setLayout(mainLayout)
+        self.setCentralWidget(mainWidget)
+        
         self.configUI()
         self.show()
+        
+    def createPointsSpinBox(self):
+        # create widget with label and spinbox
+        pointsWidget = QWidget()
+        pointsLayout = QHBoxLayout()
+        pointsLabel = QLabel("Bestehensgrenze")
+        pointsLabel.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        pointsLayout.addWidget(pointsLabel)
+        pointsSpinBox = QSpinBox()
+        maxPoints = 30
+        pointsSpinBox.setRange(0, maxPoints)
+        pointsSpinBox.setValue(int(maxPoints/2))
+        pointsSpinBox.setSingleStep(1)
+        pointsSpinBox.setSuffix(" / 30")
+        pointsSpinBox.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        pointsLayout.addWidget(pointsSpinBox)
+        # layout should have default margins
+        pointsLayout.setContentsMargins(0, 0, 0, 0)
+        pointsWidget.setLayout(pointsLayout)
+        return pointsWidget
 
     def createSubTaskWidget(self, subTask):
         subTaskLabel = QLabel(subTask["subTaskTitle"])
@@ -156,26 +199,75 @@ class ASSView(QMainWindow):
 
     def createImportGroupBox(self):
         # create a hbox containing a label, a line edit and a button
-        importLayout = QHBoxLayout()
-        importLayout.addWidget(QLabel("Arbeitsverzeichnis"))
+        workDirPathLayout = QHBoxLayout()
+        workDirPathLayout.addWidget(QLabel("Arbeitsverzeichnis"))
         self.workDirPathLineEdit = QLineEdit()
-        importLayout.addWidget(self.workDirPathLineEdit)
+        # line edit should not be editable
+        self.workDirPathLineEdit.setReadOnly(True)
+        workDirPathLayout.addWidget(self.workDirPathLineEdit)
         self.changeWorkDirButton = QPushButton("Ändern")
-        importLayout.addWidget(self.changeWorkDirButton)
+        workDirPathLayout.addWidget(self.changeWorkDirButton)
+        
+        # create vbox containing workDirPathLayout and three horizontally aligned buttons
+        importLayout = QVBoxLayout()
+        importLayout.addLayout(workDirPathLayout)
+        # insert an hline between workDirPathLayout and the buttons
+        line = QFrame()
+        line.setFrameShape(QFrame.Shape.HLine)
+        line.setStyleSheet("color: lightgrey;")
+        importLayout.addWidget(line)
+        importLayout.addLayout(self.createImportButtons())
+        importLayout.addLayout(self.createImportInfoLayout())
+    
+        
         self.importGroupBox = QGroupBox("Import")
         self.importGroupBox.setLayout(importLayout)
         return self.importGroupBox
+    
+    def createLabelWithIcon(self, text, iconPath):
+        # create hbox with label and icon
+        labelWithIconLayout = QHBoxLayout()
+        # center the label
+        labelWithIconLayout.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        labelWithIconLayout.addWidget(QLabel(text))
+        label = QLabel(text)
+        icon = QIcon(iconPath)
+        label.setPixmap(icon.pixmap(25, 25))
+        labelWithIconLayout.addWidget(label)
         
+        return labelWithIconLayout
+    
+    def createImportInfoLayout(self):
+        # create a hbox with three labels with icons
+        importInfoLayout = QHBoxLayout()
+        importInfoLayout.addLayout(self.createLabelWithIcon("0", "icons/person.fill.checkmark@4x.png"))
+        importInfoLayout.addLayout(self.createLabelWithIcon("0", "icons/person.fill.checkmark@4x.png"))
+        importInfoLayout.addLayout(self.createLabelWithIcon("0", "icons/folder.badge.person.crop@4x.png"))
+        return importInfoLayout
+       
+    def createImportButtons(self):
+        # create a horizontal layout containing three buttons
+        importButtonsLayout = QHBoxLayout()
+        self.tucanButton = QPushButton("TUCaN Teilnehmer")
+        importButtonsLayout.addWidget(self.tucanButton)
+        self.moodleButton = QPushButton("Moodle Teilnehmer")
+        importButtonsLayout.addWidget(self.moodleButton)
+        self.abgabenButton = QPushButton("Abgaben")
+        importButtonsLayout.addWidget(self.abgabenButton)
+        return importButtonsLayout 
 
     def createStatsGroupBox(self):
         # create a groupbox containing a vstack which
         # contains in every row two labels
         statsLayout = QVBoxLayout()
         self.statsLabelList = []
+        statsLabel = ['Bewertet', 'Bestanden', 'Ø Punkte']
+        statsValues = ['0 %', '0 %', '0']
         for i in range(3):
             rowLayout = QHBoxLayout()
-            rowLayout.addWidget(QLabel("Label"))
-            rowLayout.addWidget(QLabel("0"))
+            rowLayout.addWidget(QLabel(statsLabel[i]))
+            rowLayout.addWidget(QLabel(statsValues[i]))
+            rowLayout.insertStretch(1)
             statsLayout.addLayout(rowLayout)
             self.statsLabelList.append(rowLayout.itemAt(1).widget())
         self.statsGroupBox = QGroupBox("Statistik")

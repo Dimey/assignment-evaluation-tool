@@ -20,13 +20,13 @@ class ASSModel:
         self.data = pd.DataFrame(
             [], columns=["Nachname", "Vorname", "Abgabe", "Punkte", "Bestanden"]
         )
-        subTaskCount = 0
-        for task in assignmentDescription["tasks"]:
-            subTaskCount += len(task["subTasks"])
-        columnNames = [f"Criteria {idx+1}" for idx in range(subTaskCount)]
-        dataCriteria = pd.DataFrame([], columns=columnNames)
+        # subTaskCount = 0
+        # for task in assignmentDescription["tasks"]:
+        #     subTaskCount += len(task["subTasks"])
+        # columnNames = [f"Criteria {idx+1}" for idx in range(subTaskCount)]
+        # dataCriteria = pd.DataFrame([], columns=columnNames)
         # self.data = pd.concat([self.data, dataCriteria], axis=1)
-        self.data.loc[1234567, ["Nachname", "Vorname"]] = ["Haas", "Dimitri"]
-        self.data.loc[1234568, ["Nachname", "Vorname"]] = ["Wagenbach", "Lars"]
-        print(self.data)
+        # self.data.loc[1234567, ["Nachname", "Vorname"]] = ["Haas", "Dimitri"]
+        # self.data.loc[1234568, ["Nachname", "Vorname"]] = ["Wagenbach", "Lars"]
+        # print(self.data)
         return OverviewTableModel(self.data)

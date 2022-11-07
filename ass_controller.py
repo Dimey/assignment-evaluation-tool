@@ -1,5 +1,6 @@
 from functools import partial
 import random
+import pandas as pd
 
 
 class ASSController:
@@ -30,12 +31,24 @@ class ASSController:
         # connect load button to add-entry-function
         self.view.loadButton.clicked.connect(self.addEntry)
 
+    def extendDataModellBySubTasks(self, descr):
+        pass
+
     def addEntry(self):
+        subTaskCount = 0
+        for task in self.assignmentDescription["tasks"]:
+            subTaskCount += len(task["subTasks"])
+        columnNames = [f"Criteria {idx+1}" for idx in range(subTaskCount)]
+        dataCriteria = pd.DataFrame([], columns=columnNames)
+        self.overviewTableViewModel._data = pd.concat(
+            [self.overviewTableViewModel._data, dataCriteria], axis=1
+        )
+        print(self.overviewTableViewModel._data)
         # create random integer with 7 digits
         randomInt = random.randint(1000000, 9999999)
 
         self.overviewTableViewModel._data.at[1234567, "Criteria 1"] = randomInt
-        self.overviewTableViewModel._data.at[1234567, "Criteria 2"] = randomInt
+        # self.overviewTableViewModel._data.at[1234567, "Criteria 2"] = randomInt
         self.overviewTableViewModel.layoutChanged.emit()
         print(self.overviewTableViewModel._data.loc[1234567])
 
