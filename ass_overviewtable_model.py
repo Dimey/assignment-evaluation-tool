@@ -1,6 +1,7 @@
 import pandas as pd
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtCore import Qt
+import random
 
 
 class OverviewTableModel(QtCore.QAbstractTableModel):
@@ -28,3 +29,34 @@ class OverviewTableModel(QtCore.QAbstractTableModel):
 
             if orientation == Qt.Vertical:
                 return str(self._data.index[section])
+
+    def extendDataModellBySubTasks(self, descr):
+        subTaskCount = 0
+        for task in descr["tasks"]:
+            subTaskCount += len(task["subTasks"])
+        columnNames = [f"Criteria {idx+1}" for idx in range(subTaskCount)]
+        dataCriteria = pd.DataFrame([], columns=columnNames)
+        self._data = pd.concat([self._data, dataCriteria], axis=1)
+
+    def makeRandomEntry(self):
+        # create a random integer with 7 digits
+        randomInt = random.randint(1000000, 9999999)
+        # create random nachname and vorname
+        self._data.loc[randomInt, "Nachname"] = "Muster"
+        self._data.loc[randomInt, "Vorname"] = "Max"
+        self._data.loc[randomInt, "Abgabe"] = random.choice(["Ja", "Nein"])
+        self._data.loc[randomInt, "Punkte"] = random.randint(0, 30)
+        self._data.loc[randomInt, "Bestanden"] = random.choice(["Ja", "Nein"])
+        self.layoutChanged.emit()
+
+    def populateDataModel(self, tucanList, moodleList):
+        entryList = pd.merge(tucanList, moodleList, on=["Nachname", "Vorname"])
+        # populate the data model with the entries from the merged list
+        for idx, entry in entryList.iterrows():
+            self._data.loc[entry["Matrikelnummer"], "Nachname"] = entry["Nachname"]
+            self._data.loc[entry["Matrikelnummer"], "Vorname"] = entry["Vorname"]
+            self._data.loc[entry["Matrikelnummer"], "Abgabe"] = "Nein"
+            self._data.loc[entry["Matrikelnummer"], "Punkte"] = 0
+            self._data.loc[entry["Matrikelnummer"], "Bestanden"] = "Nein"
+        self._data.sort_values(by=["Nachname", "Vorname"], inplace=True)
+        self.layoutChanged.emit()

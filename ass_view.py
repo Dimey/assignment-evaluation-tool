@@ -1,6 +1,7 @@
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
+from PyQt5 import QtCore, QtGui, QtWidgets
 
 
 class ASSView(QMainWindow):
@@ -18,7 +19,9 @@ class ASSView(QMainWindow):
         evaluationOverviewLayout = QVBoxLayout()
         twoButtonLayout = QHBoxLayout()
         self.jumpToAssignmentButton = QPushButton("Zur Abgabe")
-        self.jumpToAssignmentButton.setIcon(QIcon("icons/arrowshape.turn.up.forward@4x.png"))
+        self.jumpToAssignmentButton.setIcon(
+            QIcon("icons/arrowshape.turn.up.forward@4x.png")
+        )
         self.jumpPDFExportButton = QPushButton("PDF Export")
         twoButtonLayout.addWidget(self.jumpToAssignmentButton)
         twoButtonLayout.addWidget(self.jumpPDFExportButton)
@@ -38,9 +41,10 @@ class ASSView(QMainWindow):
         # self.pointsLabel.setStyleSheet("font-weight: bold")
         # evaluationOverviewLayout.addWidget(self.pointsLabel)
         evaluationOverviewLayout.addLayout(twoButtonLayout)
-        # evaluationOverviewLayout.insertSpacing(1,14)
         self.evaluationOverviewGroupBox = QGroupBox("Bewertungsdetails")
         self.evaluationOverviewGroupBox.setLayout(evaluationOverviewLayout)
+        # deactivate the groupbox
+        self.evaluationOverviewGroupBox.setEnabled(False)
 
         # Evaluation Overview
         self.overviewTable = QTableView()
@@ -56,15 +60,18 @@ class ASSView(QMainWindow):
         # self.batchPDFExportButton.setIcon(QIcon("icons/square.and.arrow.up.on.square@4x.png"))
         self.loadButton = QPushButton("Laden")
         self.saveButton = QPushButton("Speichern")
-    
-        threeButtonLayout.addWidget(self.batchPDFExportButton)
+
         threeButtonLayout.addWidget(self.loadButton)
         threeButtonLayout.addWidget(self.saveButton)
+        threeButtonLayout.addWidget(self.batchPDFExportButton)
+        # deactive buttons
+        self.batchPDFExportButton.setEnabled(False)
+        self.saveButton.setEnabled(False)
         tableAndButtonsLayout = QVBoxLayout()
         # TABLE TITLE
         self.tableTitleLabel = QLabel(f"Bewertungsübersicht")
         font = self.tableTitleLabel.font()
-        font.setPointSize(18)  
+        font.setPointSize(18)
         self.tableTitleLabel.setFont(font)
         self.tableTitleLabel.setAlignment(Qt.AlignmentFlag.AlignCenter)
         self.tableTitleLabel.setStyleSheet("font-weight: bold")
@@ -72,19 +79,19 @@ class ASSView(QMainWindow):
         tableAndButtonsLayout.addWidget(self.tableTitleLabel)
         tableAndButtonsLayout.addWidget(self.overviewTable)
         tableAndButtonsLayout.addLayout(threeButtonLayout)
-        
+
         ##### UPPER PART OF UI #####
         # create hbox containing importgroupbox and statsgroupbox
         upperLayout = QHBoxLayout()
         upperLayout.addWidget(self.createImportGroupBox(), stretch=3)
-        
+
         # create hbox containing statsgroupbox and a spinbox
         statsLayout = QVBoxLayout()
         statsLayout.addWidget(self.createStatsGroupBox())
         statsLayout.addWidget(self.createPointsSpinBox())
         # no margins for the statsLayout
         statsLayout.setContentsMargins(0, 0, 0, 0)
-        
+
         upperLayout.addLayout(statsLayout, stretch=1)
         # create widget
         upperWidget = QWidget()
@@ -97,7 +104,7 @@ class ASSView(QMainWindow):
         bottomUILayout.addWidget(self.evaluationOverviewGroupBox, stretch=1)
         bottomUIWidget = QWidget()
         bottomUIWidget.setLayout(bottomUILayout)
-        
+
         # combine bottom and upper part in a vbox and set as central widget
         mainLayout = QVBoxLayout()
         mainLayout.addWidget(upperWidget)
@@ -105,10 +112,10 @@ class ASSView(QMainWindow):
         mainWidget = QWidget()
         mainWidget.setLayout(mainLayout)
         self.setCentralWidget(mainWidget)
-        
+
         self.configUI()
         self.show()
-        
+
     def createPointsSpinBox(self):
         # create widget with label and spinbox
         pointsWidget = QWidget()
@@ -119,13 +126,13 @@ class ASSView(QMainWindow):
         pointsSpinBox = QSpinBox()
         maxPoints = 30
         pointsSpinBox.setRange(0, maxPoints)
-        pointsSpinBox.setValue(int(maxPoints/2))
+        pointsSpinBox.setValue(int(maxPoints / 2))
         pointsSpinBox.setSingleStep(1)
         pointsSpinBox.setSuffix(" / 30")
         pointsSpinBox.setAlignment(Qt.AlignmentFlag.AlignCenter)
         pointsLayout.addWidget(pointsSpinBox)
-        # layout should have default margins
-        pointsLayout.setContentsMargins(0, 0, 0, 0)
+        pointsLayout.insertStretch(1)
+        pointsLayout.setContentsMargins(10, 0, 10, 0)
         pointsWidget.setLayout(pointsLayout)
         return pointsWidget
 
@@ -140,7 +147,9 @@ class ASSView(QMainWindow):
         self.spinBoxList.append(subTaskGrad)
         subTaskMaxPointsLabel = QLabel(f'max. {subTask["subTaskMaxPoints"]}')
         # change color of subTaskMaxPointsLabel to grey
-        subTaskMaxPointsLabel.setStyleSheet("color: grey;background-color: lightgrey; border-radius: 5px; padding: 2px;")
+        subTaskMaxPointsLabel.setStyleSheet(
+            "color: grey;background-color: lightgrey; border-radius: 5px; padding: 2px;"
+        )
         font = subTaskMaxPointsLabel.font()
         font.setPointSize(10)
         subTaskMaxPointsLabel.setFont(font)
@@ -204,10 +213,11 @@ class ASSView(QMainWindow):
         self.workDirPathLineEdit = QLineEdit()
         # line edit should not be editable
         self.workDirPathLineEdit.setReadOnly(True)
+        self.workDirPathLineEdit.setStyleSheet("color: grey;")
         workDirPathLayout.addWidget(self.workDirPathLineEdit)
         self.changeWorkDirButton = QPushButton("Ändern")
         workDirPathLayout.addWidget(self.changeWorkDirButton)
-        
+
         # create vbox containing workDirPathLayout and three horizontally aligned buttons
         importLayout = QVBoxLayout()
         importLayout.addLayout(workDirPathLayout)
@@ -218,33 +228,47 @@ class ASSView(QMainWindow):
         importLayout.addWidget(line)
         importLayout.addLayout(self.createImportButtons())
         importLayout.addLayout(self.createImportInfoLayout())
-    
-        
+
         self.importGroupBox = QGroupBox("Import")
         self.importGroupBox.setLayout(importLayout)
         return self.importGroupBox
-    
+
     def createLabelWithIcon(self, text, iconPath):
         # create hbox with label and icon
         labelWithIconLayout = QHBoxLayout()
         # center the label
         labelWithIconLayout.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        labelWithIconLayout.addWidget(QLabel(text))
+        textLabel = QLabel(text)
+        textLabel.setStyleSheet(
+            "background-color: #D6D6D6; border-radius: 5px; padding: 2px;"
+        )
+        # text should be centered
+        textLabel.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        labelWithIconLayout.addWidget(textLabel)
         label = QLabel(text)
         icon = QIcon(iconPath)
-        label.setPixmap(icon.pixmap(25, 25))
+        label.setPixmap(icon.pixmap(20, 20))
         labelWithIconLayout.addWidget(label)
-        
-        return labelWithIconLayout
-    
+
+        return labelWithIconLayout, textLabel
+
     def createImportInfoLayout(self):
         # create a hbox with three labels with icons
         importInfoLayout = QHBoxLayout()
-        importInfoLayout.addLayout(self.createLabelWithIcon("0", "icons/person.fill.checkmark@4x.png"))
-        importInfoLayout.addLayout(self.createLabelWithIcon("0", "icons/person.fill.checkmark@4x.png"))
-        importInfoLayout.addLayout(self.createLabelWithIcon("0", "icons/folder.badge.person.crop@4x.png"))
+        tucanCountLabelLayout, self.tucanCountLabel = self.createLabelWithIcon(
+            "0", "icons/person.fill.checkmark@4x.png"
+        )
+        importInfoLayout.addLayout(tucanCountLabelLayout)
+        moodleCountLabelLayout, self.moodleCountLabel = self.createLabelWithIcon(
+            "0", "icons/person.fill.checkmark@4x.png"
+        )
+        importInfoLayout.addLayout(moodleCountLabelLayout)
+        abgabenCountLabelLayout, self.abgabenCountLabel = self.createLabelWithIcon(
+            "0", "icons/folder.badge.person.crop@4x.png"
+        )
+        importInfoLayout.addLayout(abgabenCountLabelLayout)
         return importInfoLayout
-       
+
     def createImportButtons(self):
         # create a horizontal layout containing three buttons
         importButtonsLayout = QHBoxLayout()
@@ -253,16 +277,17 @@ class ASSView(QMainWindow):
         self.moodleButton = QPushButton("Moodle Teilnehmer")
         importButtonsLayout.addWidget(self.moodleButton)
         self.abgabenButton = QPushButton("Abgaben")
+        self.abgabenButton.setEnabled(False)
         importButtonsLayout.addWidget(self.abgabenButton)
-        return importButtonsLayout 
+        return importButtonsLayout
 
     def createStatsGroupBox(self):
         # create a groupbox containing a vstack which
         # contains in every row two labels
         statsLayout = QVBoxLayout()
         self.statsLabelList = []
-        statsLabel = ['Bewertet', 'Bestanden', 'Ø Punkte']
-        statsValues = ['0 %', '0 %', '0']
+        statsLabel = ["Bewertet", "Bestanden", "Ø Punkte"]
+        statsValues = ["0 %", "0 %", "0"]
         for i in range(3):
             rowLayout = QHBoxLayout()
             rowLayout.addWidget(QLabel(statsLabel[i]))
@@ -285,4 +310,17 @@ class ASSView(QMainWindow):
         header.setSectionResizeMode(2, QHeaderView.ResizeToContents)
         header.setSectionResizeMode(3, QHeaderView.ResizeToContents)
         header.setSectionResizeMode(4, QHeaderView.ResizeToContents)
-    
+
+    # FUNCTIONAL STUFF
+    def updateWorkDirLineEdit(self, path):
+        self.workDirPathLineEdit.setText(path)
+
+    def openFileDialog(self, ext):
+        return QtWidgets.QFileDialog.getOpenFileName(
+            self,
+            f"Öffne die {ext}-Datei",
+            filter=f"{ext}-Dateien k(*.{ext}) ;; Alle Dateien (*)",
+        )
+
+    def updateLabel(self, label, newValue):
+        label.setText(f"{newValue}")
