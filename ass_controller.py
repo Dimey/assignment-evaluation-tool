@@ -39,36 +39,39 @@ class ASSController:
         self.view.saveButton.clicked.connect(self.saveFile)
         self.view.tucanButton.clicked.connect(partial(self.openEntryList, "tucan"))
         self.view.moodleButton.clicked.connect(partial(self.openEntryList, "moodle"))
+        self.view.importSubmissionsButton.clicked.connect(self.importSubmissions)
 
     def openEntryList(self, typeOfList):
         otherList = "tucan" if typeOfList == "moodle" else "moodle"
-        try:
-            filename = self.view.openFileDialog("xlsx")
-            if typeOfList in filename[0].lower():
-                if typeOfList == "tucan":
-                    self.model.loadTucanList(filename[0])
-                    self.view.updateLabel(
-                        self.view.tucanCountLabel, self.model.tucanList.shape[0]
-                    )
-                else:
-                    self.model.loadMoodleList(filename[0])
-                    self.view.updateLabel(
-                        self.view.moodleCountLabel, self.model.moodleList.shape[0]
-                    )
-                if hasattr(self.model, f"{otherList}List"):
-                    self.overviewTableViewModel.populateDataModel(
-                        self.model.tucanList, self.model.moodleList
-                    )
-                    # self.view.fuelleBewertungsUebersicht(
-                    #     self.model.bewertungsuebersicht
-                    # )
+        filename = self.view.openFileDialog("xlsx", typeOfList)
+        if typeOfList in filename[0].lower():
+            if typeOfList == "tucan":
+                self.model.loadTucanList(filename[0])
+                self.view.updateLabel(
+                    self.view.tucanCountLabel, self.model.tucanList.shape[0]
+                )
             else:
-                self.view.falscheListeFenster(typeOfList)
-        except:
-            print(f"Die {typeOfList}-Liste konnte nicht geladen werden.")
+                self.model.loadMoodleList(filename[0])
+                self.view.updateLabel(
+                    self.view.moodleCountLabel, self.model.moodleList.shape[0]
+                )
+            if hasattr(self.model, f"{otherList}List"):
+                self.overviewTableViewModel.populateDataModel(
+                    self.model.tucanList, self.model.moodleList
+                )
+                self.view.importSubmissionsButton.setEnabled(True)
+
+    def importSubmissions(self):
+        path = self.view.openFolderDialog("Wähle Abgaben-Ordner aus.")
+        if path:
+            # copy selected folder (param1) to workdir/x (param2)
+            pathList = self.model.copySubmissionsToDir(path, "GMV-Testat/Abgaben")
+            self.view.updateLabel(self.view.submissionCountLabel, len(pathList))
+            # populate data model with paths and set subm. status
+            self.overviewTableViewModel.populateDataModelWithPaths(pathList)
 
     def loadSaveFile(self):
-        self.overviewTableViewModel.makeRandomEntry()
+        pass
 
     def saveFile(self):
         pass

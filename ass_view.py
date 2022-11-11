@@ -263,10 +263,10 @@ class ASSView(QMainWindow):
             "0", "icons/person.fill.checkmark@4x.png"
         )
         importInfoLayout.addLayout(moodleCountLabelLayout)
-        abgabenCountLabelLayout, self.abgabenCountLabel = self.createLabelWithIcon(
+        submissionCountLabelLayout, self.submissionCountLabel = self.createLabelWithIcon(
             "0", "icons/folder.badge.person.crop@4x.png"
         )
-        importInfoLayout.addLayout(abgabenCountLabelLayout)
+        importInfoLayout.addLayout(submissionCountLabelLayout)
         return importInfoLayout
 
     def createImportButtons(self):
@@ -276,9 +276,9 @@ class ASSView(QMainWindow):
         importButtonsLayout.addWidget(self.tucanButton)
         self.moodleButton = QPushButton("Moodle Teilnehmer")
         importButtonsLayout.addWidget(self.moodleButton)
-        self.abgabenButton = QPushButton("Abgaben")
-        self.abgabenButton.setEnabled(False)
-        importButtonsLayout.addWidget(self.abgabenButton)
+        self.importSubmissionsButton = QPushButton("Abgaben")
+        self.importSubmissionsButton.setEnabled(False)
+        importButtonsLayout.addWidget(self.importSubmissionsButton)
         return importButtonsLayout
 
     def createStatsGroupBox(self):
@@ -315,12 +315,15 @@ class ASSView(QMainWindow):
     def updateWorkDirLineEdit(self, path):
         self.workDirPathLineEdit.setText(path)
 
-    def openFileDialog(self, ext):
-        return QtWidgets.QFileDialog.getOpenFileName(
+    def openFileDialog(self, ext, name):
+        return QFileDialog.getOpenFileName(
             self,
             f"Öffne die {ext}-Datei",
-            filter=f"{ext}-Dateien k(*.{ext}) ;; Alle Dateien (*)",
+            filter=f"{ext}-Dateien k(*{name}*.{ext}) ;; Alle Dateien (*)",
         )
+
+    def openFolderDialog(self, title):
+        return QFileDialog.getExistingDirectory(self, caption=title)
 
     def updateLabel(self, label, newValue):
         label.setText(f"{newValue}")

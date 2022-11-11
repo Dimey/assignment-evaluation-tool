@@ -1,5 +1,6 @@
 import json
 import os
+from shutil import copytree
 
 import pandas as pd
 
@@ -38,3 +39,19 @@ class ASSModel:
         tucanList.columns = ["Index", "Matrikelnummer", "Nachname", "Vorname"]
         tucanList = tucanList.drop("Index", axis=1)
         self.tucanList = tucanList
+
+    def createDirs(self, path):
+        if not os.path.isdir(path):
+            os.makedirs(path)
+            return True
+        return False
+
+    def copySubmissionsToDir(self, path, newDir):
+        if not os.path.isdir(newDir):
+            copytree(f"{path}", newDir)
+        return [
+            os.path.join(root, file)
+            for root, dirs, files in os.walk(newDir)
+            for file in files
+            if file.endswith(".html")
+        ]
