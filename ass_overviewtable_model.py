@@ -15,6 +15,9 @@ class OverviewTableModel(QtCore.QAbstractTableModel):
             value = self._data.iloc[index.row(), index.column()]
             return str(value)
 
+    def getIndex(self, row):
+        return self._data.index[row]
+
     def rowCount(self, index):
         return self._data.shape[0]
 
@@ -32,19 +35,21 @@ class OverviewTableModel(QtCore.QAbstractTableModel):
                 return str(self._data.index[section])
 
     def extendDataModellBySubTasks(self, descr):
-        subTaskCount = 0
+        criteriaCount = 0
         for task in descr["tasks"]:
-            subTaskCount += len(task["subTasks"])
-        columnNames = [f"Criteria {idx+1}" for idx in range(subTaskCount)]
-        # append two more columns
+            criteriaCount += len(task["subTasks"])
+        criteriaCount += len(descr["penalties"])
+        columnNames = [f"Criteria {idx}" for idx in range(criteriaCount)]
         columnNames.append("Kommentar")
         columnNames.append("Pfad zur Abgabe")
         dataCriteria = pd.DataFrame([], columns=columnNames)
+        # set columns to zero except for the last two
+        dataCriteria[columnNames[:-2]] = 0
+        dataCriteria[["Kommentar", "Pfad zur Abgabe"]] = ""
         self._data = pd.concat([self._data, dataCriteria], axis=1)
 
     def populateDataModel(self, tucanList, moodleList):
         entryList = pd.merge(tucanList, moodleList, on=["Nachname", "Vorname"])
-        # populate the data model with the entries from the merged list
         columns = ["Nachname", "Vorname", "Abgabe", "Punkte", "Bestanden"]
         for idx, entry in entryList.iterrows():
             newValues = [entry["Nachname"], entry["Vorname"], "Nein", 0, "Nein"]
