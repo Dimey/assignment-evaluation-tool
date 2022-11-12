@@ -39,8 +39,9 @@ class ASSController:
         self.view.moodleButton.clicked.connect(partial(self.openEntryList, "moodle"))
         self.view.importSubmissionsButton.clicked.connect(self.importSubmissions)
         self.view.overviewTable.selectionModel().selectionChanged.connect(
-            self.updateSpinBoxes
+            self.updateSpinBoxList
         )
+        self.view.jumpToAssignmentButton.clicked.connect(self.jumpToAssignment)
 
     def openEntryList(self, typeOfList):
         otherList = "tucan" if typeOfList == "moodle" else "moodle"
@@ -81,6 +82,10 @@ class ASSController:
         # get data for matrikel number from data model and update spinboxes
         # data = self.overviewTableViewModel.getDataForMatrikel(self.selectedMatrikel)
         print(self.selectedMatrikel)
+
+    def jumpToAssignment(self):
+        submPath = self.overviewTableViewModel.getPath(self.selectedMatrikel)
+        self.view.openFileExplorer(submPath)
 
     def loadSaveFile(self):
         pass

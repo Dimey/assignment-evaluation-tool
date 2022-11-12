@@ -3,6 +3,9 @@ from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
 from PyQt5 import QtCore, QtGui, QtWidgets
 
+import os
+import subprocess
+
 
 class ASSView(QMainWindow):
     """Generate docstring for configUI"""
@@ -263,9 +266,10 @@ class ASSView(QMainWindow):
             "0", "icons/person.fill.checkmark@4x.png"
         )
         importInfoLayout.addLayout(moodleCountLabelLayout)
-        submissionCountLabelLayout, self.submissionCountLabel = self.createLabelWithIcon(
-            "0", "icons/folder.badge.person.crop@4x.png"
-        )
+        (
+            submissionCountLabelLayout,
+            self.submissionCountLabel,
+        ) = self.createLabelWithIcon("0", "icons/folder.badge.person.crop@4x.png")
         importInfoLayout.addLayout(submissionCountLabelLayout)
         return importInfoLayout
 
@@ -327,3 +331,10 @@ class ASSView(QMainWindow):
 
     def updateLabel(self, label, newValue):
         label.setText(f"{newValue}")
+
+    def openFileExplorer(self, path):
+        if os.name == "nt":
+            winPath = path.replace("/", "\\")
+            subprocess.call(f"explorer {winPath}")
+        else:
+            subprocess.call(["open", "-R", path])

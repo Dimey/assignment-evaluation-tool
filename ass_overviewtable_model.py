@@ -18,6 +18,9 @@ class OverviewTableModel(QtCore.QAbstractTableModel):
     def getIndex(self, row):
         return self._data.index[row]
 
+    def getPath(self, matrikel):
+        return self._data.at[matrikel, "Pfad zur Abgabe"]
+
     def rowCount(self, index):
         return self._data.shape[0]
 
