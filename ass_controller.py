@@ -19,8 +19,6 @@ class ASSController:
             self.assignmentDescription
         )
 
-        self.selectedRow = 0
-
         self.initializeUI()
 
         # Connect signals and slots
@@ -40,6 +38,9 @@ class ASSController:
         self.view.tucanButton.clicked.connect(partial(self.openEntryList, "tucan"))
         self.view.moodleButton.clicked.connect(partial(self.openEntryList, "moodle"))
         self.view.importSubmissionsButton.clicked.connect(self.importSubmissions)
+        self.view.overviewTable.selectionModel().selectionChanged.connect(
+            self.updateSpinBoxes
+        )
 
     def openEntryList(self, typeOfList):
         otherList = "tucan" if typeOfList == "moodle" else "moodle"
@@ -66,9 +67,20 @@ class ASSController:
         if path:
             # copy selected folder (param1) to workdir/x (param2)
             pathList = self.model.copySubmissionsToDir(path, "GMV-Testat/Abgaben")
-            self.view.updateLabel(self.view.submissionCountLabel, len(pathList))
             # populate data model with paths and set subm. status
             self.overviewTableViewModel.populateDataModelWithPaths(pathList)
+            self.view.updateLabel(self.view.submissionCountLabel, len(pathList))
+            self.view.overviewTable.selectRow(0)
+            self.selectedMatrikel = self.overviewTableViewModel.getIndex(0)
+            self.view.evaluationOverviewGroupBox.setEnabled(True)
+
+    def updateSpinBoxList(self):
+        self.selectedMatrikel = self.overviewTableViewModel.getIndex(
+            self.view.overviewTable.selectionModel().selectedRows()[0].row()
+        )
+        # get data for matrikel number from data model and update spinboxes
+        # data = self.overviewTableViewModel.getDataForMatrikel(self.selectedMatrikel)
+        print(self.selectedMatrikel)
 
     def loadSaveFile(self):
         pass
