@@ -21,6 +21,9 @@ class OverviewTableModel(QtCore.QAbstractTableModel):
     def getPath(self, matrikel):
         return self._data.at[matrikel, "Pfad zur Abgabe"]
 
+    def getEvalData(self, matrikel):
+        return self._data.loc[matrikel, self.criteriaColumns[:-1]]
+
     def rowCount(self, index):
         return self._data.shape[0]
 
@@ -42,13 +45,13 @@ class OverviewTableModel(QtCore.QAbstractTableModel):
         for task in descr["tasks"]:
             criteriaCount += len(task["subTasks"])
         criteriaCount += len(descr["penalties"])
-        columnNames = [f"Criteria {idx}" for idx in range(criteriaCount)]
-        columnNames.append("Kommentar")
-        columnNames.append("Pfad zur Abgabe")
-        dataCriteria = pd.DataFrame([], columns=columnNames)
+        self.criteriaColumns = [f"Criteria {idx}" for idx in range(criteriaCount)]
+        self.criteriaColumns.append("Kommentar")
+        self.criteriaColumns.append("Pfad zur Abgabe")
+        dataCriteria = pd.DataFrame([], columns=self.criteriaColumns)
         # set columns to zero except for the last two
-        dataCriteria[columnNames[:-2]] = 0
-        dataCriteria[["Kommentar", "Pfad zur Abgabe"]] = ""
+        dataCriteria[self.criteriaColumns[:-2]]
+        dataCriteria[["Kommentar", "Pfad zur Abgabe"]]
         self._data = pd.concat([self._data, dataCriteria], axis=1)
 
     def populateDataModel(self, tucanList, moodleList):
@@ -57,6 +60,8 @@ class OverviewTableModel(QtCore.QAbstractTableModel):
         for idx, entry in entryList.iterrows():
             newValues = [entry["Nachname"], entry["Vorname"], "Nein", 0, "Nein"]
             self._data.loc[entry["Matrikelnummer"], columns] = newValues
+        self._data[self.criteriaColumns[:-2]] = 0
+        self._data[self.criteriaColumns[-2]] = "Keine Bemerkungen."
         self._data.sort_values(by=["Nachname", "Vorname"], inplace=True)
         self.layoutChanged.emit()
 

@@ -338,3 +338,8 @@ class ASSView(QMainWindow):
             subprocess.call(f"explorer {winPath}")
         else:
             subprocess.call(["open", "-R", path])
+            
+    def updateSpinBoxes(self, data):
+        for idx, spinBox in enumerate(self.spinBoxList):
+            spinBox.setValue(data[idx])
+ 

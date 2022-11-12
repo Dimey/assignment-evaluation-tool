@@ -80,8 +80,8 @@ class ASSController:
             self.view.overviewTable.selectionModel().selectedRows()[0].row()
         )
         # get data for matrikel number from data model and update spinboxes
-        # data = self.overviewTableViewModel.getDataForMatrikel(self.selectedMatrikel)
-        print(self.selectedMatrikel)
+        data = self.overviewTableViewModel.getEvalData(self.selectedMatrikel)
+        self.view.updateSpinBoxes(data)
 
     def jumpToAssignment(self):
         submPath = self.overviewTableViewModel.getPath(self.selectedMatrikel)
