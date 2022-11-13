@@ -22,7 +22,7 @@ class OverviewTableModel(QtCore.QAbstractTableModel):
         return self._data.at[matrikel, "Pfad zur Abgabe"]
 
     def getEvalData(self, matrikel):
-        return self._data.loc[matrikel, self.criteriaColumns[:-1]]
+        return self._data.loc[matrikel, self.criteriaColumns]
 
     def rowCount(self, index):
         return self._data.shape[0]
@@ -41,17 +41,12 @@ class OverviewTableModel(QtCore.QAbstractTableModel):
                 return str(self._data.index[section])
 
     def extendDataModellBySubTasks(self, descr):
-        criteriaCount = 0
-        for task in descr["tasks"]:
-            criteriaCount += len(task["subTasks"])
+        criteriaCount = sum(map(lambda task: len(task["subTasks"]), descr["tasks"]))
         criteriaCount += len(descr["penalties"])
         self.criteriaColumns = [f"Criteria {idx}" for idx in range(criteriaCount)]
         self.criteriaColumns.append("Kommentar")
         self.criteriaColumns.append("Pfad zur Abgabe")
         dataCriteria = pd.DataFrame([], columns=self.criteriaColumns)
-        # set columns to zero except for the last two
-        dataCriteria[self.criteriaColumns[:-2]]
-        dataCriteria[["Kommentar", "Pfad zur Abgabe"]]
         self._data = pd.concat([self._data, dataCriteria], axis=1)
 
     def populateDataModel(self, tucanList, moodleList):
@@ -70,3 +65,10 @@ class OverviewTableModel(QtCore.QAbstractTableModel):
             matrikel = int(os.path.splitext(os.path.basename(path))[0])
             self._data.loc[matrikel, ["Abgabe", "Pfad zur Abgabe"]] = ["Ja", path]
         self.layoutChanged.emit()
+
+    def updateValueForCriteria(self, nr, matrikel, value):
+        self._data.at[matrikel, f"Criteria {nr}"] = value
+        self._data.at[matrikel, "Punkte"] = self._data.loc[
+            matrikel, self.criteriaColumns[:-2]
+        ].sum()
+        self.dataChanged.emit(self.index(matrikel, 3), self.index(matrikel, 3))

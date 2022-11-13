@@ -316,15 +316,22 @@ class ASSView(QMainWindow):
         header.setSectionResizeMode(4, QHeaderView.ResizeToContents)
 
     # FUNCTIONAL STUFF
+    def setActiveStatusOfWidget(self, widget, isActive):
+        widget.setEnabled(isActive)
+    
     def updateWorkDirLineEdit(self, path):
         self.workDirPathLineEdit.setText(path)
 
     def openFileDialog(self, ext, name):
-        return QFileDialog.getOpenFileName(
+        self._test_dialog = QFileDialog()
+        try:
+            return self._test_dialog.getOpenFileName(
             self,
             f"Öffne die {ext}-Datei",
             filter=f"{ext}-Dateien k(*{name}*.{ext}) ;; Alle Dateien (*)",
         )
+        finally:
+            self._test_dialog = None
 
     def openFolderDialog(self, title):
         return QFileDialog.getExistingDirectory(self, caption=title)
@@ -340,6 +347,8 @@ class ASSView(QMainWindow):
             subprocess.call(["open", "-R", path])
             
     def updateSpinBoxes(self, data):
+        self.setActiveStatusOfWidget(self.jumpToAssignmentButton, type(data[-1]) == str)
         for idx, spinBox in enumerate(self.spinBoxList):
             spinBox.setValue(data[idx])
+        self.remarkTextEdit.setPlainText(data[-2])
  

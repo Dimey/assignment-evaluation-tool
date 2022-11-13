@@ -68,7 +68,6 @@ class ASSController:
         if path:
             # copy selected folder (param1) to workdir/x (param2)
             pathList = self.model.copySubmissionsToDir(path, "GMV-Testat/Abgaben")
-            # populate data model with paths and set subm. status
             self.overviewTableViewModel.populateDataModelWithPaths(pathList)
             self.view.updateLabel(self.view.submissionCountLabel, len(pathList))
             self.view.overviewTable.selectRow(0)
@@ -79,7 +78,6 @@ class ASSController:
         self.selectedMatrikel = self.overviewTableViewModel.getIndex(
             self.view.overviewTable.selectionModel().selectedRows()[0].row()
         )
-        # get data for matrikel number from data model and update spinboxes
         data = self.overviewTableViewModel.getEvalData(self.selectedMatrikel)
         self.view.updateSpinBoxes(data)
 
@@ -87,11 +85,13 @@ class ASSController:
         submPath = self.overviewTableViewModel.getPath(self.selectedMatrikel)
         self.view.openFileExplorer(submPath)
 
+    def savePoints(self, lineEditObj, idx):
+        self.overviewTableViewModel.updateValueForCriteria(
+            idx, self.selectedMatrikel, self.view.spinBoxList[idx].value()
+        )
+
     def loadSaveFile(self):
         pass
 
     def saveFile(self):
         pass
-
-    def savePoints(self, lineEditObj, idx):
-        print(f"Save points in QLineEdit Nr.{idx+1}")
