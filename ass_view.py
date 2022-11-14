@@ -323,15 +323,11 @@ class ASSView(QMainWindow):
         self.workDirPathLineEdit.setText(path)
 
     def openFileDialog(self, ext, name):
-        self._test_dialog = QFileDialog()
-        try:
-            return self._test_dialog.getOpenFileName(
+        return QFileDialog.getOpenFileName(
             self,
             f"Öffne die {ext}-Datei",
             filter=f"{ext}-Dateien k(*{name}*.{ext}) ;; Alle Dateien (*)",
         )
-        finally:
-            self._test_dialog = None
 
     def openFolderDialog(self, title):
         return QFileDialog.getExistingDirectory(self, caption=title)

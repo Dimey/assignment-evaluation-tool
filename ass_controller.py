@@ -42,6 +42,7 @@ class ASSController:
             self.updateSpinBoxList
         )
         self.view.jumpToAssignmentButton.clicked.connect(self.jumpToAssignment)
+        self.view.remarkTextEdit.textChanged.connect(self.saveRemarks)
 
     def openEntryList(self, typeOfList):
         otherList = "tucan" if typeOfList == "moodle" else "moodle"
@@ -88,6 +89,11 @@ class ASSController:
     def savePoints(self, lineEditObj, idx):
         self.overviewTableViewModel.updateValueForCriteria(
             idx, self.selectedMatrikel, self.view.spinBoxList[idx].value()
+        )
+
+    def saveRemarks(self):
+        self.overviewTableViewModel.updateRemarkText(
+            self.selectedMatrikel, self.view.remarkTextEdit.toPlainText()
         )
 
     def loadSaveFile(self):

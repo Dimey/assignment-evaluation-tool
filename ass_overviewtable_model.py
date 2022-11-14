@@ -72,3 +72,6 @@ class OverviewTableModel(QtCore.QAbstractTableModel):
             matrikel, self.criteriaColumns[:-2]
         ].sum()
         self.dataChanged.emit(self.index(matrikel, 3), self.index(matrikel, 3))
+
+    def updateRemarkText(self, matrikel, text):
+        self._data.at[matrikel, "Kommentar"] = text
