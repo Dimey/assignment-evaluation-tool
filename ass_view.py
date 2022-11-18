@@ -243,7 +243,7 @@ class ASSView(QMainWindow):
         labelWithIconLayout.setAlignment(Qt.AlignmentFlag.AlignCenter)
         textLabel = QLabel(text)
         textLabel.setStyleSheet(
-            "background-color: #D6D6D6; border-radius: 5px; padding: 2px;"
+            "background-color: #D6D6D6; border-radius: 9px; padding: 5px;"
         )
         # text should be centered
         textLabel.setAlignment(Qt.AlignmentFlag.AlignCenter)
@@ -332,8 +332,9 @@ class ASSView(QMainWindow):
     def openFolderDialog(self, title):
         return QFileDialog.getExistingDirectory(self, caption=title)
 
-    def updateLabel(self, label, newValue):
-        label.setText(f"{newValue}")
+    def updateLabel(self, labels, newValues):
+        for i in range(len(labels)):
+            labels[i].setText(str(newValues[i]))
 
     def openFileExplorer(self, path):
         if os.name == "nt":

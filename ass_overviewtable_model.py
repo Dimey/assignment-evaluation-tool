@@ -15,6 +15,13 @@ class OverviewTableModel(QtCore.QAbstractTableModel):
             value = self._data.iloc[index.row(), index.column()]
             return str(value)
 
+    def getData(self):
+        return self._data
+
+    def setData(self, data):
+        self._data = data
+        self.layoutChanged.emit()
+
     def getIndex(self, row):
         return self._data.index[row]
 
@@ -23,6 +30,9 @@ class OverviewTableModel(QtCore.QAbstractTableModel):
 
     def getEvalData(self, matrikel):
         return self._data.loc[matrikel, self.criteriaColumns]
+
+    def getSubmissionCount(self):
+        return self._data["Abgabe"].value_counts()["Ja"]
 
     def rowCount(self, index):
         return self._data.shape[0]

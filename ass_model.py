@@ -55,3 +55,10 @@ class ASSModel:
             for file in files
             if file.endswith(".html")
         ]
+
+    def saveDataToJSON(self, data):
+        data.to_json("data.json")
+
+    def loadSaveFileFromJSON(self):
+        if os.path.isfile("data.json"):
+            return pd.read_json("data.json")

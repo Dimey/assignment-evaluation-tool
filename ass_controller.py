@@ -51,12 +51,12 @@ class ASSController:
             if typeOfList == "tucan":
                 self.model.loadTucanList(filename[0])
                 self.view.updateLabel(
-                    self.view.tucanCountLabel, self.model.tucanList.shape[0]
+                    [self.view.tucanCountLabel], [self.model.tucanList.shape[0]]
                 )
             else:
                 self.model.loadMoodleList(filename[0])
                 self.view.updateLabel(
-                    self.view.moodleCountLabel, self.model.moodleList.shape[0]
+                    [self.view.moodleCountLabel], [self.model.moodleList.shape[0]]
                 )
             if hasattr(self.model, f"{otherList}List"):
                 self.overviewTableViewModel.populateDataModel(
@@ -70,10 +70,11 @@ class ASSController:
             # copy selected folder (param1) to workdir/x (param2)
             pathList = self.model.copySubmissionsToDir(path, "GMV-Testat/Abgaben")
             self.overviewTableViewModel.populateDataModelWithPaths(pathList)
-            self.view.updateLabel(self.view.submissionCountLabel, len(pathList))
+            self.view.updateLabel([self.view.submissionCountLabel], [len(pathList)])
             self.view.overviewTable.selectRow(0)
             self.selectedMatrikel = self.overviewTableViewModel.getIndex(0)
             self.view.evaluationOverviewGroupBox.setEnabled(True)
+            self.view.saveButton.setEnabled(True)
 
     def updateSpinBoxList(self):
         self.selectedMatrikel = self.overviewTableViewModel.getIndex(
@@ -97,7 +98,23 @@ class ASSController:
         )
 
     def loadSaveFile(self):
-        pass
+        data = self.model.loadSaveFileFromJSON()
+        if data is not None:
+            self.overviewTableViewModel.setData(data)
+            self.view.evaluationOverviewGroupBox.setEnabled(True)
+            self.view.saveButton.setEnabled(True)
+            participantCount = f"{len(self.overviewTableViewModel.getData())}+"
+            submCount = f"{self.overviewTableViewModel.getSubmissionCount()}"
+            self.view.updateLabel(
+                [
+                    self.view.tucanCountLabel,
+                    self.view.moodleCountLabel,
+                    self.view.submissionCountLabel,
+                ],
+                [participantCount, participantCount, submCount],
+            )
+            self.view.overviewTable.selectRow(0)
+            self.selectedMatrikel = self.overviewTableViewModel.getIndex(0)
 
     def saveFile(self):
-        pass
+        self.model.saveDataToJSON(self.overviewTableViewModel.getData())
