@@ -58,6 +58,9 @@ class OverviewTableModel(QtCore.QAbstractTableModel):
         self.criteriaColumns.append("Pfad zur Abgabe")
         dataCriteria = pd.DataFrame([], columns=self.criteriaColumns)
         self._data = pd.concat([self._data, dataCriteria], axis=1)
+        self.weights = descr["weights"]
+        if len(self.weights) != criteriaCount:
+            raise ValueError("Number of weights does not match number of criteria.")
 
     def populateDataModel(self, tucanList, moodleList):
         entryList = pd.merge(tucanList, moodleList, on=["Nachname", "Vorname"])
@@ -78,9 +81,13 @@ class OverviewTableModel(QtCore.QAbstractTableModel):
 
     def updateValueForCriteria(self, nr, matrikel, value):
         self._data.at[matrikel, f"Criteria {nr}"] = value
-        self._data.at[matrikel, "Punkte"] = self._data.loc[
-            matrikel, self.criteriaColumns[:-2]
-        ].sum()
+        # weight the points with the weights and sum them up
+        self._data.at[matrikel, "Punkte"] = sum(
+            map(
+                lambda x: x[0] * x[1],
+                zip(self._data.loc[matrikel, self.criteriaColumns[:-2]], self.weights),
+            )
+        )
         self.dataChanged.emit(self.index(matrikel, 3), self.index(matrikel, 3))
 
     def updateRemarkText(self, matrikel, text):
