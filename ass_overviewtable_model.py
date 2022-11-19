@@ -58,6 +58,8 @@ class OverviewTableModel(QtCore.QAbstractTableModel):
         self.criteriaColumns.append("Pfad zur Abgabe")
         dataCriteria = pd.DataFrame([], columns=self.criteriaColumns)
         self._data = pd.concat([self._data, dataCriteria], axis=1)
+        self.maxPoints = descr["maxPoints"]
+        self.passThreshold = int(self.maxPoints / 2)
         self.weights = descr["weights"]
         if len(self.weights) != criteriaCount:
             raise ValueError("Number of weights does not match number of criteria.")
@@ -94,6 +96,7 @@ class OverviewTableModel(QtCore.QAbstractTableModel):
                 )
             ),
         )
+        self.updatePassStatus()
         self.dataChanged.emit(self.index(matrikel, 3), self.index(matrikel, 3))
 
     def updateRemarkText(self, matrikel, text):
@@ -105,3 +108,13 @@ class OverviewTableModel(QtCore.QAbstractTableModel):
             self._data.columns[column], ascending=order == Qt.AscendingOrder
         )
         self.layoutChanged.emit()
+
+    def setPassThreshold(self, newValue):
+        self.passThreshold = newValue
+        self.updatePassStatus()
+        self.layoutChanged.emit()
+
+    def updatePassStatus(self):
+        self._data["Bestanden"] = self._data["Punkte"].apply(
+            lambda x: "Ja" if x >= self.passThreshold else "Nein"
+        )

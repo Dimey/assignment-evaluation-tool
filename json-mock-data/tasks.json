@@ -1,27 +1,27 @@
 {
 "tasks": [
     {
-        "taskTitle": "Aufgabe 1",
+        "taskTitle": "Aufgabe 1: Schattenwurf",
         "subTasks":[
-            {"subTaskTitle": "Aufgabe 1.1", "subTaskMaxPoints": 10},
-            {"subTaskTitle": "Aufgabe 1.2", "subTaskMaxPoints": 9},
-            {"subTaskTitle": "Aufgabe 1.3", "subTaskMaxPoints": 3}
+            {"subTaskTitle": "Schatteneckpunkte", "subTaskMaxPoints": 3},
+            {"subTaskTitle": "Vielecke dazwischen", "subTaskMaxPoints": 2},
+            {"subTaskTitle": "Verschneidungsfrei", "subTaskMaxPoints": 1},
+            {"subTaskTitle": "Korrekte Skulptur", "subTaskMaxPoints": 1}
         ]
     },
     {
-        "taskTitle": "Aufgabe 2",
+        "taskTitle": "Aufgabe 2: Dreitafelprojektion",
         "subTasks":[
-            {"subTaskTitle": "Aufgabe 2.1", "subTaskMaxPoints": 3},
-            {"subTaskTitle": "Aufgabe 2.2", "subTaskMaxPoints": 5},
-            {"subTaskTitle": "Aufgabe 2.3", "subTaskMaxPoints": 12},
-            {"subTaskTitle": "Aufgabe 2.4", "subTaskMaxPoints": 2}
+            {"subTaskTitle": "Eck- und Innenpunkte", "subTaskMaxPoints": 8},
+            {"subTaskTitle": "Verbindungen außen", "subTaskMaxPoints": 4},
+            {"subTaskTitle": "Verbindungen innen", "subTaskMaxPoints": 9}
         ]
     },
     {
-        "taskTitle": "Aufgabe 3",
+        "taskTitle": "Aufgabe 3: Abbildung 3D auf 2D",
         "subTasks":[
-            {"subTaskTitle": "Aufgabe 3.1", "subTaskMaxPoints": 3},
-            {"subTaskTitle": "Aufgabe 3.2", "subTaskMaxPoints": 5}
+            {"subTaskTitle": "Eckpunkte", "subTaskMaxPoints": 8},
+            {"subTaskTitle": "Verbindungslinien", "subTaskMaxPoints": 13}
         ]
     }
 ],
@@ -33,7 +33,8 @@
         "penaltyTitle": "Pünktlichkeit"
     }
 ],
+"maxPoints": 30,
 "weights": [
-    1.5, 1, 1, 1, 0.5, 0.25, 0.625, 1, 0.375, -1, -1
+    1.5, 1, 1, 0.5, 0.5625, 0.4, 0.6, 0.5, 0.5, -1, -1
 ]
 }

@@ -43,6 +43,7 @@ class ASSController:
         )
         self.view.jumpToAssignmentButton.clicked.connect(self.jumpToAssignment)
         self.view.remarkTextEdit.textChanged.connect(self.saveRemarks)
+        self.view.pointsSpinBox.valueChanged.connect(self.changePassThreshold)
 
     def openEntryList(self, typeOfList):
         otherList = "tucan" if typeOfList == "moodle" else "moodle"
@@ -118,3 +119,6 @@ class ASSController:
 
     def saveFile(self):
         self.model.saveDataToJSON(self.overviewTableViewModel.getData())
+
+    def changePassThreshold(self):
+        self.overviewTableViewModel.setPassThreshold(self.view.pointsSpinBox.value())
