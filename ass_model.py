@@ -4,8 +4,6 @@ from shutil import copytree
 
 import pandas as pd
 
-from ass_overviewtable_model import *
-
 
 class ASSModel:
     """docstring for ASSModell."""
@@ -18,12 +16,6 @@ class ASSModel:
         json_file_path = "json-mock-data/tasks.json"
         with open(json_file_path, "r") as j:
             return json.loads(j.read())
-
-    def createOverviewTableModel(self):
-        self.data = pd.DataFrame(
-            [], columns=["Nachname", "Vorname", "Abgabe", "Punkte", "Bestanden"]
-        )
-        return OverviewTableModel(self.data)
 
     def changeWorkDir(self, path):
         os.chdir(path)

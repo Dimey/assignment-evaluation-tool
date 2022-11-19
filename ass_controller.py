@@ -1,6 +1,5 @@
 from functools import partial
-import random
-import pandas as pd
+from ass_overviewtable_model import OverviewTableModel
 
 
 class ASSController:
@@ -13,11 +12,8 @@ class ASSController:
 
         # load assignment defining json file
         self.assignmentDescription = model.loadAssignmentDescription()
-        self.overviewTableViewModel = model.createOverviewTableModel()
+        self.overviewTableViewModel = OverviewTableModel(self.assignmentDescription)
         self.view.createUI(self.assignmentDescription, self.overviewTableViewModel)
-        self.overviewTableViewModel.extendDataModellBySubTasks(
-            self.assignmentDescription
-        )
 
         self.initializeUI()
 

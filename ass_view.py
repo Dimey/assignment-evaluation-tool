@@ -15,7 +15,7 @@ class ASSView(QMainWindow):
 
     def createUI(self, contents, overviewTableModel):
         self.setWindowTitle("Assignment Evaluator")
-
+        self.contents = contents
         self.spinBoxList = []
 
         # Evaluation Detail Panel
@@ -29,10 +29,10 @@ class ASSView(QMainWindow):
         twoButtonLayout.addWidget(self.jumpToAssignmentButton)
         twoButtonLayout.addWidget(self.jumpPDFExportButton)
 
-        taskGroupBoxes = self.createAllTaskGroupBoxes(contents["tasks"])
+        taskGroupBoxes = self.createAllTaskGroupBoxes(self.contents["tasks"])
         for taskGroupBox in taskGroupBoxes:
             evaluationOverviewLayout.addWidget(taskGroupBox)
-        penaltyGroupBox = self.createPenaltyGroupBox(contents["penalties"])
+        penaltyGroupBox = self.createPenaltyGroupBox(self.contents["penalties"])
         evaluationOverviewLayout.addWidget(penaltyGroupBox)
 
         self.remarkTextEdit = QPlainTextEdit()
@@ -127,11 +127,11 @@ class ASSView(QMainWindow):
         pointsLabel.setAlignment(Qt.AlignmentFlag.AlignCenter)
         pointsLayout.addWidget(pointsLabel)
         self.pointsSpinBox = QSpinBox()
-        maxPoints = 30
+        maxPoints = self.contents["maxPoints"]
         self.pointsSpinBox.setRange(0, maxPoints)
         self.pointsSpinBox.setValue(int(maxPoints / 2))
         self.pointsSpinBox.setSingleStep(1)
-        self.pointsSpinBox.setSuffix(" / 30")
+        self.pointsSpinBox.setSuffix(f" / {maxPoints}")
         self.pointsSpinBox.setAlignment(Qt.AlignmentFlag.AlignCenter)
         pointsLayout.addWidget(self.pointsSpinBox)
         pointsLayout.insertStretch(1)
@@ -242,8 +242,9 @@ class ASSView(QMainWindow):
         # center the label
         labelWithIconLayout.setAlignment(Qt.AlignmentFlag.AlignCenter)
         textLabel = QLabel(text)
+        # alternative color: #D6D6D6
         textLabel.setStyleSheet(
-            "background-color: #D6D6D6; border-radius: 9px; padding: 5px;"
+            "background-color: rgb(235, 77, 62); border-radius: 8px; padding: 4px; color: white;"
         )
         # text should be centered
         textLabel.setAlignment(Qt.AlignmentFlag.AlignCenter)
