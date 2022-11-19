@@ -40,6 +40,7 @@ class ASSController:
         self.view.jumpToAssignmentButton.clicked.connect(self.jumpToAssignment)
         self.view.remarkTextEdit.textChanged.connect(self.saveRemarks)
         self.view.pointsSpinBox.valueChanged.connect(self.changePassThreshold)
+        self.view.evaluationOverviewGroupBox.toggled.connect(self.saveEvalStatus)
 
     def openEntryList(self, typeOfList):
         otherList = "tucan" if typeOfList == "moodle" else "moodle"
@@ -118,3 +119,8 @@ class ASSController:
 
     def changePassThreshold(self):
         self.overviewTableViewModel.setPassThreshold(self.view.pointsSpinBox.value())
+
+    def saveEvalStatus(self):
+        self.overviewTableViewModel.setEvalStatus(
+            self.selectedMatrikel, not self.view.evaluationOverviewGroupBox.isChecked()
+        )

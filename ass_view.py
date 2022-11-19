@@ -44,9 +44,9 @@ class ASSView(QMainWindow):
         # self.pointsLabel.setStyleSheet("font-weight: bold")
         # evaluationOverviewLayout.addWidget(self.pointsLabel)
         evaluationOverviewLayout.addLayout(twoButtonLayout)
-        self.evaluationOverviewGroupBox = QGroupBox("Bewertungsdetails")
+        self.evaluationOverviewGroupBox = GroupBox("Bewertung abgeschlossen")
+        self.evaluationOverviewGroupBox.setCheckable(True)
         self.evaluationOverviewGroupBox.setLayout(evaluationOverviewLayout)
-        # deactivate the groupbox
         self.evaluationOverviewGroupBox.setEnabled(False)
 
         # Evaluation Overview
@@ -319,7 +319,7 @@ class ASSView(QMainWindow):
     # FUNCTIONAL STUFF
     def setActiveStatusOfWidget(self, widget, isActive):
         widget.setEnabled(isActive)
-    
+
     def updateWorkDirLineEdit(self, path):
         self.workDirPathLineEdit.setText(path)
 
@@ -343,10 +343,25 @@ class ASSView(QMainWindow):
             subprocess.call(f"explorer {winPath}")
         else:
             subprocess.call(["open", "-R", path])
-            
+
     def updateSpinBoxes(self, data):
-        self.setActiveStatusOfWidget(self.jumpToAssignmentButton, type(data[-1]) == str)
+        self.setActiveStatusOfWidget(self.jumpToAssignmentButton, type(data[-2]) == str)
         for idx, spinBox in enumerate(self.spinBoxList):
             spinBox.setValue(data[idx])
-        self.remarkTextEdit.setPlainText(data[-2])
- 
+        self.remarkTextEdit.setPlainText(data[-3])
+        self.evaluationOverviewGroupBox.setChecked(not data[-1])
+
+
+class GroupBox(QtWidgets.QGroupBox):
+    def paintEvent(self, event):
+        painter = QtWidgets.QStylePainter(self)
+        option = QtWidgets.QStyleOptionGroupBox()
+        self.initStyleOption(option)
+        if self.isCheckable():
+            option.state &= ~QtWidgets.QStyle.State_Off & ~QtWidgets.QStyle.State_On
+            option.state |= (
+                QtWidgets.QStyle.State_Off
+                if self.isChecked()
+                else QtWidgets.QStyle.State_On
+            )
+        painter.drawComplexControl(QtWidgets.QStyle.CC_GroupBox, option)

@@ -43,7 +43,7 @@ class OverviewTableModel(QtCore.QAbstractTableModel):
         return self._data.at[matrikel, "Pfad zur Abgabe"]
 
     def getEvalData(self, matrikel):
-        return self._data.loc[matrikel, self.criteriaColumnNames]
+        return self._data.loc[matrikel, self.criteriaColumnNames + ["Bewertet"]]
 
     def getSubmissionCount(self):
         return self._data["Abgabe"].value_counts()["Ja"]
@@ -118,3 +118,6 @@ class OverviewTableModel(QtCore.QAbstractTableModel):
         self._data["Bestanden"] = self._data["Punkte"].apply(
             lambda x: "Ja" if x >= self.passThreshold else "Nein"
         )
+
+    def setEvalStatus(self, matrikel, newStatus):
+        self._data.at[matrikel, "Bewertet"] = newStatus
