@@ -53,7 +53,7 @@ class ASSView(QMainWindow):
         self.overviewTable = QTableView()
         self.overviewTable.setSortingEnabled(True)
         self.overviewTable.setModel(overviewTableModel)
-        # self.overviewTable.setSortingEnabled(True)
+        self.overviewTable.setSortingEnabled(True)
         self.overviewTable.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Minimum)
         self.overviewTable.setMinimumWidth(len(overviewTableModel._data.columns) * 100)
 

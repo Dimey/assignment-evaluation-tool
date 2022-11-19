@@ -81,14 +81,27 @@ class OverviewTableModel(QtCore.QAbstractTableModel):
 
     def updateValueForCriteria(self, nr, matrikel, value):
         self._data.at[matrikel, f"Criteria {nr}"] = value
-        # weight the points with the weights and sum them up
-        self._data.at[matrikel, "Punkte"] = sum(
-            map(
-                lambda x: x[0] * x[1],
-                zip(self._data.loc[matrikel, self.criteriaColumns[:-2]], self.weights),
-            )
+        # weight the points with the weights, sum them up and cap at 0
+        self._data.at[matrikel, "Punkte"] = max(
+            0,
+            sum(
+                map(
+                    lambda x: x[0] * x[1],
+                    zip(
+                        self._data.loc[matrikel, self.criteriaColumns[:-2]],
+                        self.weights,
+                    ),
+                )
+            ),
         )
         self.dataChanged.emit(self.index(matrikel, 3), self.index(matrikel, 3))
 
     def updateRemarkText(self, matrikel, text):
         self._data.at[matrikel, "Kommentar"] = text
+
+    def sort(self, column, order):
+        self.layoutAboutToBeChanged.emit()
+        self._data = self._data.sort_values(
+            self._data.columns[column], ascending=order == Qt.AscendingOrder
+        )
+        self.layoutChanged.emit()
