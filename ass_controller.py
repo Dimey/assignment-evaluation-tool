@@ -39,8 +39,8 @@ class ASSController:
         )
         self.view.jumpToAssignmentButton.clicked.connect(self.jumpToAssignment)
         self.view.remarkTextEdit.textChanged.connect(self.saveRemarks)
-        self.view.pointsSpinBox.valueChanged.connect(self.changePassThreshold)
-        self.view.evaluationOverviewGroupBox.toggled.connect(self.saveEvalStatus)
+        self.view.passThresholdSpinBox.valueChanged.connect(self.changePassThreshold)
+        self.view.evaluationOverviewGroupBox.clicked.connect(self.saveEvalStatus)
 
     def openEntryList(self, typeOfList):
         otherList = "tucan" if typeOfList == "moodle" else "moodle"
@@ -89,6 +89,12 @@ class ASSController:
         self.overviewTableViewModel.updateValueForCriteria(
             idx, self.selectedMatrikel, self.view.spinBoxList[idx].value()
         )
+        self.view.updateLabel(
+            [self.view.statsLabelList[1]],
+            [
+                f"{100*self.overviewTableViewModel.getPassedCount() / self.overviewTableViewModel.getSubmissionCount():.1f} %"
+            ],
+        )
 
     def saveRemarks(self):
         self.overviewTableViewModel.updateRemarkText(
@@ -102,14 +108,22 @@ class ASSController:
             self.view.evaluationOverviewGroupBox.setEnabled(True)
             self.view.saveButton.setEnabled(True)
             participantCount = f"{len(self.overviewTableViewModel.getData())}+"
-            submCount = f"{self.overviewTableViewModel.getSubmissionCount()}"
+            submCount = self.overviewTableViewModel.getSubmissionCount()
             self.view.updateLabel(
                 [
                     self.view.tucanCountLabel,
                     self.view.moodleCountLabel,
                     self.view.submissionCountLabel,
+                    self.view.statsLabelList[0],
+                    self.view.statsLabelList[1],
                 ],
-                [participantCount, participantCount, submCount],
+                [
+                    participantCount,
+                    participantCount,
+                    str(submCount),
+                    f"{100*self.overviewTableViewModel.getEvaluatedCount() / submCount:.1f} %",
+                    f"{100*self.overviewTableViewModel.getPassedCount() / submCount:.1f} %",
+                ],
             )
             self.view.overviewTable.selectRow(0)
             self.selectedMatrikel = self.overviewTableViewModel.getIndex(0)
@@ -118,9 +132,23 @@ class ASSController:
         self.model.saveDataToJSON(self.overviewTableViewModel.getData())
 
     def changePassThreshold(self):
-        self.overviewTableViewModel.setPassThreshold(self.view.pointsSpinBox.value())
+        self.overviewTableViewModel.setPassThreshold(
+            self.view.passThresholdSpinBox.value()
+        )
+        self.view.updateLabel(
+            [self.view.statsLabelList[1]],
+            [
+                f"{100*self.overviewTableViewModel.getPassedCount() / self.overviewTableViewModel.getSubmissionCount():.1f} %"
+            ],
+        )
 
     def saveEvalStatus(self):
-        self.overviewTableViewModel.setEvalStatus(
+        evaluatedCount = self.overviewTableViewModel.setEvalStatus(
             self.selectedMatrikel, not self.view.evaluationOverviewGroupBox.isChecked()
+        )
+        self.view.updateLabel(
+            [self.view.statsLabelList[0]],
+            [
+                f"{100*evaluatedCount / self.overviewTableViewModel.getSubmissionCount():.1f} %"
+            ],
         )
