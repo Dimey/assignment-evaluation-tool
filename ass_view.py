@@ -91,7 +91,7 @@ class ASSView(QMainWindow):
         # create hbox containing statsgroupbox and a spinbox
         statsLayout = QVBoxLayout()
         statsLayout.addWidget(self.createStatsGroupBox())
-        statsLayout.addWidget(self.createPointsSpinBox())
+        statsLayout.addWidget(self.createPassThresholdSpinBox())
         # no margins for the statsLayout
         statsLayout.setContentsMargins(0, 0, 0, 0)
 
@@ -119,21 +119,21 @@ class ASSView(QMainWindow):
         self.configUI()
         self.show()
 
-    def createPointsSpinBox(self):
+    def createPassThresholdSpinBox(self):
         # create widget with label and spinbox
         pointsWidget = QWidget()
         pointsLayout = QHBoxLayout()
         pointsLabel = QLabel("Bestehensgrenze")
         pointsLabel.setAlignment(Qt.AlignmentFlag.AlignCenter)
         pointsLayout.addWidget(pointsLabel)
-        self.pointsSpinBox = QSpinBox()
+        self.passThresholdSpinBox = QSpinBox()
         maxPoints = self.contents["maxPoints"]
-        self.pointsSpinBox.setRange(0, maxPoints)
-        self.pointsSpinBox.setValue(int(maxPoints / 2))
-        self.pointsSpinBox.setSingleStep(1)
-        self.pointsSpinBox.setSuffix(f" / {maxPoints}")
-        self.pointsSpinBox.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        pointsLayout.addWidget(self.pointsSpinBox)
+        self.passThresholdSpinBox.setRange(0, maxPoints)
+        self.passThresholdSpinBox.setValue(int(maxPoints / 2))
+        self.passThresholdSpinBox.setSingleStep(1)
+        self.passThresholdSpinBox.setSuffix(f" / {maxPoints}")
+        self.passThresholdSpinBox.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        pointsLayout.addWidget(self.passThresholdSpinBox)
         pointsLayout.insertStretch(1)
         pointsLayout.setContentsMargins(10, 0, 10, 0)
         pointsWidget.setLayout(pointsLayout)
@@ -299,7 +299,7 @@ class ASSView(QMainWindow):
             rowLayout.addWidget(QLabel(statsValues[i]))
             rowLayout.insertStretch(1)
             statsLayout.addLayout(rowLayout)
-            self.statsLabelList.append(rowLayout.itemAt(1).widget())
+            self.statsLabelList.append(rowLayout.itemAt(2).widget())
         self.statsGroupBox = QGroupBox("Statistik")
         self.statsGroupBox.setLayout(statsLayout)
         return self.statsGroupBox

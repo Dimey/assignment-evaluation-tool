@@ -11,16 +11,15 @@ class OverviewTableModel(QtCore.QAbstractTableModel):
         self._data = pd.DataFrame(
             [], columns=["Nachname", "Vorname", "Abgabe", "Punkte", "Bestanden"]
         )
-        self.descr = descr
-        self.maxPoints = self.descr["maxPoints"]
+        self.maxPoints = descr["maxPoints"]
         self.passThreshold = int(self.maxPoints / 2)
         criteriaCount = sum(
-            map(lambda task: len(task["subTasks"]), self.descr["tasks"])
-        ) + len(self.descr["penalties"])
+            map(lambda task: len(task["subTasks"]), descr["tasks"])
+        ) + len(descr["penalties"])
         self.criteriaColumnNames = [f"Criteria {idx}" for idx in range(criteriaCount)]
         self.criteriaColumnNames.append("Kommentar")
         self.criteriaColumnNames.append("Pfad zur Abgabe")
-        self.weights = self.descr["weights"]
+        self.weights = descr["weights"]
         if len(self.weights) != criteriaCount:
             raise ValueError("Number of weights does not match number of criteria.")
 
@@ -118,6 +117,18 @@ class OverviewTableModel(QtCore.QAbstractTableModel):
         self._data["Bestanden"] = self._data["Punkte"].apply(
             lambda x: "Ja" if x >= self.passThreshold else "Nein"
         )
+        
+    def getPassedCount(self):
+        return self._data[
+            self._data["Bestanden"] == "Ja"
+        ].shape[0]
 
     def setEvalStatus(self, matrikel, newStatus):
         self._data.at[matrikel, "Bewertet"] = newStatus
+        return self.getEvaluatedCount()
+
+    def getEvaluatedCount(self):
+        return self._data[
+            (self._data["Bewertet"] == True) & (self._data["Abgabe"] == "Ja")
+        ].shape[0]
+        
