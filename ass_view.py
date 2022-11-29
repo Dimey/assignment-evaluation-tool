@@ -292,7 +292,7 @@ class ASSView(QMainWindow):
         statsLayout = QVBoxLayout()
         self.statsLabelList = []
         statsLabel = ["Bewertet", "Bestanden", "Ø Punkte"]
-        statsValues = ["0 %", "0 %", "0"]
+        statsValues = ["0 von 0", "0 %", "0.0"]
         for i in range(3):
             rowLayout = QHBoxLayout()
             rowLayout.addWidget(QLabel(statsLabel[i]))

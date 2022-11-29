@@ -32,6 +32,16 @@ class OverviewTableModel(QtCore.QAbstractTableModel):
             value = self._data.iloc[index.row(), index.column()]
             return str(value)
 
+        if role == Qt.BackgroundRole:
+            if self._data.iloc[index.row(), -2] == True:
+                # return pastell green
+                return QtGui.QColor(200, 255, 200)
+            # return pastell red if Abgabe is "Nein"
+            if self._data.iloc[index.row(), 2] == "Nein":
+                return QtGui.QColor(255, 200, 200)
+            else:
+                return QtGui.QColor(255, 255, 255)
+
     def getData(self):
         return self._data
 
@@ -140,6 +150,7 @@ class OverviewTableModel(QtCore.QAbstractTableModel):
         ].shape[0]
 
     def getAvgPoints(self):
-        return self._data[
+        points = self._data[
             (self._data["Bewertet"] == True) & (self._data["Abgabe"] == "Ja")
         ]["Punkte"].mean()
+        return 0 if points != points else points

@@ -83,6 +83,14 @@ class ASSController:
             self.selectedMatrikel = self.overviewTableViewModel.getIndex(0)
             self.view.evaluationOverviewGroupBox.setEnabled(True)
             self.view.saveButton.setEnabled(True)
+            self.view.updateLabel(
+                [
+                    self.view.statsLabelList[0],
+                ],
+                [
+                    f"{self.overviewTableViewModel.getEvaluatedCount()} von {self.overviewTableViewModel.getSubmissionCount()}"
+                ],
+            )
 
     def updateSpinBoxList(self):
         self.selectedMatrikel = self.overviewTableViewModel.getIndex(
