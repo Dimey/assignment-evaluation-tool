@@ -25,10 +25,9 @@ class ASSController:
         self.view.updateWorkDirLineEdit(path=self.model.workDir)
 
     def connectSignals(self):
-        # connect textfields to savePoints method
+        # signals through user interaction
         for idx, spinBox in enumerate(self.view.spinBoxList):
             spinBox.valueChanged.connect(partial(self.savePoints, spinBox, idx))
-
         self.view.loadButton.clicked.connect(self.loadSaveFile)
         self.view.saveButton.clicked.connect(self.saveFile)
         self.view.tucanButton.clicked.connect(partial(self.openEntryList, "tucan"))
@@ -41,6 +40,17 @@ class ASSController:
         self.view.remarkTextEdit.textChanged.connect(self.saveRemarks)
         self.view.passThresholdSpinBox.valueChanged.connect(self.changePassThreshold)
         self.view.evaluationOverviewGroupBox.clicked.connect(self.saveEvalStatus)
+
+        # signals from model
+        self.overviewTableViewModel.labelStat0Signal.connect(
+            self.view.statsLabelList[0].setText
+        )
+        self.overviewTableViewModel.labelStat1Signal.connect(
+            self.view.statsLabelList[1].setText
+        )
+        self.overviewTableViewModel.labelStat2Signal.connect(
+            self.view.statsLabelList[2].setText
+        )
 
     def openEntryList(self, typeOfList):
         otherList = "tucan" if typeOfList == "moodle" else "moodle"
@@ -116,13 +126,15 @@ class ASSController:
                     self.view.submissionCountLabel,
                     self.view.statsLabelList[0],
                     self.view.statsLabelList[1],
+                    self.view.statsLabelList[2],
                 ],
                 [
                     participantCount,
                     participantCount,
                     str(submCount),
-                    f"{100*self.overviewTableViewModel.getEvaluatedCount() / submCount:.1f} %",
+                    f"{self.overviewTableViewModel.getEvaluatedCount()} von {submCount}",
                     f"{100*self.overviewTableViewModel.getPassedCount() / submCount:.1f} %",
+                    f"{self.overviewTableViewModel.getAvgPoints():.1f}",
                 ],
             )
             self.view.overviewTable.selectRow(0)
@@ -135,20 +147,8 @@ class ASSController:
         self.overviewTableViewModel.setPassThreshold(
             self.view.passThresholdSpinBox.value()
         )
-        self.view.updateLabel(
-            [self.view.statsLabelList[1]],
-            [
-                f"{100*self.overviewTableViewModel.getPassedCount() / self.overviewTableViewModel.getSubmissionCount():.1f} %"
-            ],
-        )
 
     def saveEvalStatus(self):
-        evaluatedCount = self.overviewTableViewModel.setEvalStatus(
+        evaluatedCount = self.overviewTableViewModel.updateEvalStatus(
             self.selectedMatrikel, not self.view.evaluationOverviewGroupBox.isChecked()
-        )
-        self.view.updateLabel(
-            [self.view.statsLabelList[0]],
-            [
-                f"{100*evaluatedCount / self.overviewTableViewModel.getSubmissionCount():.1f} %"
-            ],
         )

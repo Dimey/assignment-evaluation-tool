@@ -6,6 +6,10 @@ import os
 
 
 class OverviewTableModel(QtCore.QAbstractTableModel):
+    labelStat0Signal = QtCore.pyqtSignal(str)  # subm
+    labelStat1Signal = QtCore.pyqtSignal(str)  # passed
+    labelStat2Signal = QtCore.pyqtSignal(str)  # avg
+
     def __init__(self, descr):
         super(OverviewTableModel, self).__init__()
         self._data = pd.DataFrame(
@@ -117,18 +121,25 @@ class OverviewTableModel(QtCore.QAbstractTableModel):
         self._data["Bestanden"] = self._data["Punkte"].apply(
             lambda x: "Ja" if x >= self.passThreshold else "Nein"
         )
-        
-    def getPassedCount(self):
-        return self._data[
-            self._data["Bestanden"] == "Ja"
-        ].shape[0]
+        statTxt = f"{100*self.getPassedCount() / self.getSubmissionCount():.1f} %"
+        self.labelStat1Signal.emit(statTxt)
 
-    def setEvalStatus(self, matrikel, newStatus):
+    def getPassedCount(self):
+        return self._data[self._data["Bestanden"] == "Ja"].shape[0]
+
+    def updateEvalStatus(self, matrikel, newStatus):
         self._data.at[matrikel, "Bewertet"] = newStatus
+        statTxt = f"{self.getEvaluatedCount()} von {self.getSubmissionCount()}"
+        self.labelStat0Signal.emit(statTxt)
+        self.labelStat2Signal.emit(f"{self.getAvgPoints():.1f}")
         return self.getEvaluatedCount()
 
     def getEvaluatedCount(self):
         return self._data[
             (self._data["Bewertet"] == True) & (self._data["Abgabe"] == "Ja")
         ].shape[0]
-        
+
+    def getAvgPoints(self):
+        return self._data[
+            (self._data["Bewertet"] == True) & (self._data["Abgabe"] == "Ja")
+        ]["Punkte"].mean()

@@ -25,9 +25,9 @@ class ASSView(QMainWindow):
         self.jumpToAssignmentButton.setIcon(
             QIcon("icons/arrowshape.turn.up.forward@4x.png")
         )
-        self.jumpPDFExportButton = QPushButton("PDF Export")
+        self.pdfExportButton = QPushButton("PDF Export")
         twoButtonLayout.addWidget(self.jumpToAssignmentButton)
-        twoButtonLayout.addWidget(self.jumpPDFExportButton)
+        twoButtonLayout.addWidget(self.pdfExportButton)
 
         taskGroupBoxes = self.createAllTaskGroupBoxes(self.contents["tasks"])
         for taskGroupBox in taskGroupBoxes:
@@ -350,6 +350,8 @@ class ASSView(QMainWindow):
             spinBox.setValue(data[idx])
         self.remarkTextEdit.setPlainText(data[-3])
         self.evaluationOverviewGroupBox.setChecked(not data[-1])
+
+    # SLOTS
 
 
 class GroupBox(QtWidgets.QGroupBox):
