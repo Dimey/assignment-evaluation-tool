@@ -30,13 +30,13 @@ class OverviewTableModel(QtCore.QAbstractTableModel):
     def data(self, index, role):
         if role == Qt.DisplayRole:
             value = self._data.iloc[index.row(), index.column()]
+            if isinstance(value, float):
+                return f"{value:g}"
             return str(value)
 
         if role == Qt.BackgroundRole:
             if self._data.iloc[index.row(), -2] == True:
-                # return pastell green
                 return QtGui.QColor(200, 255, 200)
-            # return pastell red if Abgabe is "Nein"
             if self._data.iloc[index.row(), 2] == "Nein":
                 return QtGui.QColor(255, 200, 200)
             else:
@@ -44,6 +44,9 @@ class OverviewTableModel(QtCore.QAbstractTableModel):
 
     def getData(self):
         return self._data
+
+    def getStudentData(self, matrikel):
+        return self._data.loc[matrikel]
 
     def setData(self, data):
         self._data = data

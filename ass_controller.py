@@ -40,6 +40,7 @@ class ASSController:
         self.view.remarkTextEdit.textChanged.connect(self.saveRemarks)
         self.view.passThresholdSpinBox.valueChanged.connect(self.changePassThreshold)
         self.view.evaluationOverviewGroupBox.clicked.connect(self.saveEvalStatus)
+        self.view.pdfExportButton.clicked.connect(self.exportToPDF)
 
         # signals from model
         self.overviewTableViewModel.labelStat0Signal.connect(
@@ -159,4 +160,12 @@ class ASSController:
     def saveEvalStatus(self):
         evaluatedCount = self.overviewTableViewModel.updateEvalStatus(
             self.selectedMatrikel, not self.view.evaluationOverviewGroupBox.isChecked()
+        )
+
+    def exportToPDF(self):
+        studentData = self.overviewTableViewModel.getStudentData(self.selectedMatrikel)
+        self.model.exportToPDF(
+            studentData,
+            self.assignmentDescription,
+            self.overviewTableViewModel.passThreshold,
         )

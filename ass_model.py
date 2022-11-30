@@ -1,12 +1,20 @@
 import json
 import os
+import sys
 from shutil import copytree
 
 import pandas as pd
+from ass_pdf import PDFModel
 
 
 class ASSModel:
     """docstring for ASSModell."""
+
+    @classmethod
+    def resourcePath(cls, relative_path):
+        """Get absolute path to resource, works for dev and for PyInstaller"""
+        base_path = getattr(sys, "_MEIPASS", os.path.dirname(os.path.abspath(__file__)))
+        return os.path.join(base_path, relative_path)
 
     def __init__(self):
         super(ASSModel, self).__init__()
@@ -54,3 +62,14 @@ class ASSModel:
     def loadSaveFileFromJSON(self):
         if os.path.isfile("data.json"):
             return pd.read_json("data.json")
+
+    def exportToPDF(self, data, descr, th):
+        img_dir = ASSModel.resourcePath("imgs")
+        pdf = PDFModel(data, descr, th, img_dir)
+        path = data["Pfad zur Abgabe"]
+        path = os.path.split(path)[0]
+        pdf.output(f"{path}/{data.name}.pdf", "F")
+
+        # pdf.output(
+        #     f"{path}{'/' if path != '' else 'GMV Testat Tool/Studenten ohne Abgabe/'}{data.index[0]}.pdf"
+        # )
