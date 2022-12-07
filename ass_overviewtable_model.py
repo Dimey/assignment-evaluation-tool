@@ -61,6 +61,11 @@ class OverviewTableModel(QtCore.QAbstractTableModel):
     def getEvalData(self, matrikel):
         return self._data.loc[matrikel, self.criteriaColumnNames + ["Bewertet"]]
 
+    def getIndexOfEvaluatedStudents(self):
+        return self._data[
+            (self._data["Bewertet"] == True) & (self._data["Abgabe"] == "Ja")
+        ].index
+
     def getSubmissionCount(self):
         return self._data["Abgabe"].value_counts()["Ja"]
 

@@ -1,5 +1,12 @@
+import math
+
 from functools import partial
 from ass_overviewtable_model import OverviewTableModel
+
+from PyQt5.QtCore import QThreadPool
+
+# import PDFWorker from ass_pdf_worker.py
+from ass_pdf_worker import PDFWorker
 
 
 class ASSController:
@@ -9,6 +16,7 @@ class ASSController:
         super(ASSController, self).__init__()
         self.view = view
         self.model = model
+        self.threadpool = QThreadPool()
 
         # load assignment defining json file
         self.assignmentDescription = model.loadAssignmentDescription()
@@ -41,6 +49,7 @@ class ASSController:
         self.view.passThresholdSpinBox.valueChanged.connect(self.changePassThreshold)
         self.view.evaluationOverviewGroupBox.clicked.connect(self.saveEvalStatus)
         self.view.pdfExportButton.clicked.connect(self.exportToPDF)
+        self.view.batchPDFExportButton.clicked.connect(self.batchExportToPDFThread)
 
         # signals from model
         self.overviewTableViewModel.labelStat0Signal.connect(
@@ -84,6 +93,7 @@ class ASSController:
             self.selectedMatrikel = self.overviewTableViewModel.getIndex(0)
             self.view.evaluationOverviewGroupBox.setEnabled(True)
             self.view.saveButton.setEnabled(True)
+            self.view.batchPDFExportButton.setEnabled(True)
             self.view.updateLabel(
                 [
                     self.view.statsLabelList[0],
@@ -97,6 +107,7 @@ class ASSController:
         self.selectedMatrikel = self.overviewTableViewModel.getIndex(
             self.view.overviewTable.selectionModel().selectedRows()[0].row()
         )
+
         data = self.overviewTableViewModel.getEvalData(self.selectedMatrikel)
         self.view.updateSpinBoxes(data)
 
@@ -126,6 +137,7 @@ class ASSController:
             self.overviewTableViewModel.setData(data)
             self.view.evaluationOverviewGroupBox.setEnabled(True)
             self.view.saveButton.setEnabled(True)
+            self.view.batchPDFExportButton.setEnabled(True)
             participantCount = f"{len(self.overviewTableViewModel.getData())}+"
             submCount = self.overviewTableViewModel.getSubmissionCount()
             self.view.updateLabel(
@@ -159,13 +171,39 @@ class ASSController:
 
     def saveEvalStatus(self):
         evaluatedCount = self.overviewTableViewModel.updateEvalStatus(
-            self.selectedMatrikel, not self.view.evaluationOverviewGroupBox.isChecked()
+            self.selectedMatrikel,
+            not self.view.evaluationOverviewGroupBox.isChecked(),
         )
 
-    def exportToPDF(self):
-        studentData = self.overviewTableViewModel.getStudentData(self.selectedMatrikel)
+    def exportToPDF(self, matrikel=None):
+        studentData = self.overviewTableViewModel.getStudentData(
+            matrikel or self.selectedMatrikel
+        )
         self.model.exportToPDF(
             studentData,
             self.assignmentDescription,
             self.overviewTableViewModel.passThreshold,
         )
+
+    def batchExportToPDF(self, progress_callback):
+        matrikelNumbers = self.overviewTableViewModel.getIndexOfEvaluatedStudents()
+        pdfCount = len(matrikelNumbers)
+        for idx, matrikel in enumerate(matrikelNumbers):
+            self.exportToPDF(matrikel)
+            progress = math.ceil((idx + 1) * 100 / pdfCount)
+            progress_callback.emit(progress, f"{idx+1} von {pdfCount} PDFs erzeugt.")
+
+    def thread_complete(self):
+        print("BATCH EXPORT COMPLETE!")
+
+    # let the batchExportToPDF function run in a separate thread
+    def batchExportToPDFThread(self):
+        self.view.showProgressWindow("PDF Batch Export")
+        # Pass the function to execute
+        worker = PDFWorker(
+            self.batchExportToPDF
+        )  # Any other args, kwargs are passed to the run function
+        worker.signals.finished.connect(self.thread_complete)
+        worker.signals.progress.connect(self.view.progressWindow.updateProgressInfo)
+
+        self.threadpool.start(worker)

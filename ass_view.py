@@ -3,6 +3,8 @@ from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
 from PyQt5 import QtCore, QtGui, QtWidgets
 
+from ass_progress_window import ProgressWindow
+
 import os
 import subprocess
 
@@ -345,11 +347,15 @@ class ASSView(QMainWindow):
             subprocess.call(["open", "-R", path])
 
     def updateSpinBoxes(self, data):
-        self.setActiveStatusOfWidget(self.jumpToAssignmentButton, type(data[-2]) == str)
         for idx, spinBox in enumerate(self.spinBoxList):
             spinBox.setValue(data[idx])
         self.remarkTextEdit.setPlainText(data[-3])
         self.evaluationOverviewGroupBox.setChecked(not data[-1])
+        self.setActiveStatusOfWidget(self.jumpToAssignmentButton, type(data[-2]) == str)
+        self.setActiveStatusOfWidget(self.pdfExportButton, type(data[-2]) == str)
+
+    def showProgressWindow(self, title):
+        self.progressWindow = ProgressWindow(title)
 
     # SLOTS
 
