@@ -94,6 +94,7 @@ class ASSController:
             self.view.evaluationOverviewGroupBox.setEnabled(True)
             self.view.saveButton.setEnabled(True)
             self.view.batchPDFExportButton.setEnabled(True)
+            self.view.preCheckButton.setEnabled(True)
             self.view.updateLabel(
                 [
                     self.view.statsLabelList[0],
@@ -138,6 +139,7 @@ class ASSController:
             self.view.evaluationOverviewGroupBox.setEnabled(True)
             self.view.saveButton.setEnabled(True)
             self.view.batchPDFExportButton.setEnabled(True)
+            self.view.preCheckButton.setEnabled(True)
             participantCount = f"{len(self.overviewTableViewModel.getData())}+"
             submCount = self.overviewTableViewModel.getSubmissionCount()
             self.view.updateLabel(

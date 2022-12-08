@@ -34,13 +34,18 @@ class OverviewTableModel(QtCore.QAbstractTableModel):
                 return f"{value:g}"
             return str(value)
 
-        if role == Qt.BackgroundRole:
-            if self._data.iloc[index.row(), -2] == True:
-                return QtGui.QColor(200, 255, 200)
+        # if student is evaluated and has a submission, set a checkmark as decoration for the "Abgabe" column, but on the right side
+        if role == Qt.DecorationRole and index.column() == 0:
+            if (
+                self._data.iloc[index.row(), -2] == True
+                and self._data.iloc[index.row(), 2] == "Ja"
+            ):
+                return QtGui.QIcon("icons/checkmark.png")
+
+        # if student has no submission make the text light gray
+        if role == Qt.ForegroundRole:
             if self._data.iloc[index.row(), 2] == "Nein":
-                return QtGui.QColor(255, 200, 200)
-            else:
-                return QtGui.QColor(255, 255, 255)
+                return QtGui.QColor(200, 200, 200)
 
     def getData(self):
         return self._data
@@ -150,6 +155,8 @@ class OverviewTableModel(QtCore.QAbstractTableModel):
         statTxt = f"{self.getEvaluatedCount()} von {self.getSubmissionCount()}"
         self.labelStat0Signal.emit(statTxt)
         self.labelStat2Signal.emit(f"{self.getAvgPoints():.1f}")
+        # emit signal to trigger decoration update
+        self.dataChanged.emit(self.index(matrikel, 0), self.index(matrikel, 0))
         return self.getEvaluatedCount()
 
     def getEvaluatedCount(self):

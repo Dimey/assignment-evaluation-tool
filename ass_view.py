@@ -40,11 +40,8 @@ class ASSView(QMainWindow):
         self.remarkTextEdit = QPlainTextEdit()
         # set placeholder text in gray
         self.remarkTextEdit.setPlaceholderText("Bemerkungen")
+        # add label to layout
         evaluationOverviewLayout.addWidget(self.remarkTextEdit)
-        # self.pointsLabel = QLabel(f"Gesamtpunktzahl\n{0} / {30}")
-        # self.pointsLabel.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        # self.pointsLabel.setStyleSheet("font-weight: bold")
-        # evaluationOverviewLayout.addWidget(self.pointsLabel)
         evaluationOverviewLayout.addLayout(twoButtonLayout)
         self.evaluationOverviewGroupBox = GroupBox("Bewertung abgeschlossen")
         self.evaluationOverviewGroupBox.setCheckable(True)
@@ -61,17 +58,24 @@ class ASSView(QMainWindow):
 
         # 3 Buttons below table
         threeButtonLayout = QHBoxLayout()
-        self.batchPDFExportButton = QPushButton("Batch-PDF-Export")
+        self.batchPDFExportButton = QPushButton("Batch PDF Export")
         # self.batchPDFExportButton.setIcon(QIcon("icons/square.and.arrow.up.on.square@4x.png"))
         self.loadButton = QPushButton("Laden")
         self.saveButton = QPushButton("Speichern")
+        self.preCheckButton = QPushButton("ID-Check")
+        self.preCheckButton.setStyleSheet(
+            "QPushButton {background-color: rgb(215, 77, 62); color: white;}"
+            "QPushButton:disabled {background-color: rgb(233, 122, 112); color: white;}"
+        )
 
         threeButtonLayout.addWidget(self.loadButton)
         threeButtonLayout.addWidget(self.saveButton)
         threeButtonLayout.addWidget(self.batchPDFExportButton)
+        threeButtonLayout.addWidget(self.preCheckButton)
         # deactive buttons
         self.batchPDFExportButton.setEnabled(False)
         self.saveButton.setEnabled(False)
+        self.preCheckButton.setEnabled(False)
         tableAndButtonsLayout = QVBoxLayout()
         # TABLE TITLE
         self.tableTitleLabel = QLabel(f"Bewertungsübersicht")
@@ -246,7 +250,7 @@ class ASSView(QMainWindow):
         textLabel = QLabel(text)
         # alternative color: #D6D6D6
         textLabel.setStyleSheet(
-            "background-color: rgb(235, 77, 62); border-radius: 8px; padding: 4px; color: white;"
+            "background-color: rgb(230, 119, 109); border-radius: 8px; padding: 4px; color: white;"
         )
         # text should be centered
         textLabel.setAlignment(Qt.AlignmentFlag.AlignCenter)
