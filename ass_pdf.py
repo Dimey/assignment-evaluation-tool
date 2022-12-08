@@ -244,6 +244,3 @@ class PDFModel(FPDF):
 
         self.emptyLine()
         self.grading(self.data["Punkte"], self.threshold)
-
-        # # Notes
-        # self.twoPartCell_notes(self.data["Kommentar"])

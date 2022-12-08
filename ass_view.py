@@ -356,6 +356,21 @@ class ASSView(QMainWindow):
 
     def showProgressWindow(self, title):
         self.progressWindow = ProgressWindow(title)
+        mainWindowPos = self.pos()
+        mainWindowSize = self.size()
+        progressWindowSize = self.progressWindow.size()
+        self.progressWindow.move(
+            int(
+                mainWindowPos.x()
+                + mainWindowSize.width() / 2
+                - progressWindowSize.width() / 2
+            ),
+            int(
+                mainWindowPos.y()
+                + mainWindowSize.height() / 2
+                - progressWindowSize.height() / 2
+            ),
+        )
 
     # SLOTS
 
