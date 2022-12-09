@@ -50,6 +50,9 @@ class ASSView(QMainWindow):
 
         # Evaluation Overview
         self.overviewTable = QTableView()
+        # enable smooth scrolling
+        self.overviewTable.setVerticalScrollMode(QAbstractItemView.ScrollPerPixel)
+        self.overviewTable.setHorizontalScrollMode(QAbstractItemView.ScrollPerPixel)
         self.overviewTable.setSortingEnabled(True)
         self.overviewTable.setModel(overviewTableModel)
         self.overviewTable.setSortingEnabled(True)

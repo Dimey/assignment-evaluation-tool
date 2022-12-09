@@ -50,6 +50,7 @@ class ASSController:
         self.view.evaluationOverviewGroupBox.clicked.connect(self.saveEvalStatus)
         self.view.pdfExportButton.clicked.connect(self.exportToPDF)
         self.view.batchPDFExportButton.clicked.connect(self.batchExportToPDFThread)
+        self.view.preCheckButton.clicked.connect(self.preCheck)
 
         # signals from model
         self.overviewTableViewModel.labelStat0Signal.connect(
@@ -209,3 +210,24 @@ class ASSController:
         worker.signals.progress.connect(self.view.progressWindow.updateProgressInfo)
 
         self.threadpool.start(worker)
+
+    def preCheck(self):
+        matrikelNumbers = self.overviewTableViewModel.getIndexOfSubmittingStudents()
+        paths = self.overviewTableViewModel.getPathsOfSubmittingStudents()
+
+        valueVariations = self.assignmentDescription["valueVariations"]
+        searchStrings = self.assignmentDescription["searchStrings"]
+
+        for matrikel, path in zip(matrikelNumbers, paths):
+            cp_html = self.model.getHTMLFromMatrikel(path)
+
+            failCount = 0
+            for idx, (key, value) in enumerate(searchStrings.items()):
+                pos = int(str(matrikel)[int(key)])
+                searchString = value.replace("$", str(valueVariations[idx][pos]))
+                if cp_html.find(searchString) == -1:
+                    failCount += 1
+            self.overviewTableViewModel.updateValueForCriteria(
+                self.overviewTableViewModel.criteriaCount - 1, matrikel, failCount
+            )
+        self.updateSpinBoxList()

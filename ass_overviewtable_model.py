@@ -17,14 +17,16 @@ class OverviewTableModel(QtCore.QAbstractTableModel):
         )
         self.maxPoints = descr["maxPoints"]
         self.passThreshold = int(self.maxPoints / 2)
-        criteriaCount = sum(
+        self.criteriaCount = sum(
             map(lambda task: len(task["subTasks"]), descr["tasks"])
         ) + len(descr["penalties"])
-        self.criteriaColumnNames = [f"Criteria {idx}" for idx in range(criteriaCount)]
+        self.criteriaColumnNames = [
+            f"Criteria {idx}" for idx in range(self.criteriaCount)
+        ]
         self.criteriaColumnNames.append("Kommentar")
         self.criteriaColumnNames.append("Pfad zur Abgabe")
         self.weights = descr["weights"]
-        if len(self.weights) != criteriaCount:
+        if len(self.weights) != self.criteriaCount:
             raise ValueError("Number of weights does not match number of criteria.")
 
     def data(self, index, role):
@@ -63,6 +65,9 @@ class OverviewTableModel(QtCore.QAbstractTableModel):
     def getPath(self, matrikel):
         return self._data.at[matrikel, "Pfad zur Abgabe"]
 
+    def getPathsOfSubmittingStudents(self):
+        return self._data[self._data["Abgabe"] == "Ja"]["Pfad zur Abgabe"].tolist()
+
     def getEvalData(self, matrikel):
         return self._data.loc[matrikel, self.criteriaColumnNames + ["Bewertet"]]
 
@@ -73,6 +78,9 @@ class OverviewTableModel(QtCore.QAbstractTableModel):
 
     def getSubmissionCount(self):
         return self._data["Abgabe"].value_counts()["Ja"]
+
+    def getIndexOfSubmittingStudents(self):
+        return self._data[self._data["Abgabe"] == "Ja"].index
 
     def rowCount(self, index):
         return self._data.shape[0]
