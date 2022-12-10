@@ -13,7 +13,7 @@ class OverviewTableModel(QtCore.QAbstractTableModel):
     def __init__(self, descr):
         super(OverviewTableModel, self).__init__()
         self._data = pd.DataFrame(
-            [], columns=["Nachname", "Vorname", "Abgabe", "Punkte", "Bestanden"]
+            [], columns=["Nachname", "Vorname", "Punkte", "Bestanden", "Abgabe"]
         )
         self.maxPoints = descr["maxPoints"]
         self.passThreshold = int(self.maxPoints / 2)
@@ -34,20 +34,34 @@ class OverviewTableModel(QtCore.QAbstractTableModel):
             value = self._data.iloc[index.row(), index.column()]
             if isinstance(value, float):
                 return f"{value:g}"
+            if index.column() == 3:
+                if self._data.iloc[index.row(), -2] == True:
+                    return "\u2713"
+                else:
+                    return None
             return str(value)
-
-        # if student is evaluated and has a submission, set a checkmark as decoration for the "Abgabe" column, but on the right side
-        if role == Qt.DecorationRole and index.column() == 0:
-            if (
-                self._data.iloc[index.row(), -2] == True
-                and self._data.iloc[index.row(), 2] == "Ja"
-            ):
-                return QtGui.QIcon("icons/checkmark.png")
 
         # if student has no submission make the text light gray
         if role == Qt.ForegroundRole:
-            if self._data.iloc[index.row(), 2] == "Nein":
+            if self._data.iloc[index.row(), 4] == "Nein":
                 return QtGui.QColor(200, 200, 200)
+            if index.column() == 2:
+                if self._data.iloc[index.row(), 2] < self.passThreshold:
+                    return QtGui.QColor(191, 70, 39)
+                return QtGui.QColor(0, 128, 0)
+
+        # make the points and bestanden align them to the center
+        if role == Qt.TextAlignmentRole:
+            if index.column() == 2:
+                return Qt.AlignRight | Qt.AlignVCenter
+            if index.column() == 3:
+                return Qt.AlignCenter | Qt.AlignVCenter
+
+        # make the points bold
+        if role == Qt.FontRole and index.column() in [2, 3]:
+            font = QtGui.QFont()
+            font.setBold(True)
+            return font
 
     def getData(self):
         return self._data
@@ -86,12 +100,14 @@ class OverviewTableModel(QtCore.QAbstractTableModel):
         return self._data.shape[0]
 
     def columnCount(self, index):
-        return 5  # only display the first 5 columns in the ui
+        return 4  # only display the first 3 columns in the ui
 
     def headerData(self, section, orientation, role):
         # section is the index of the column/row.
         if role == Qt.DisplayRole:
             if orientation == Qt.Horizontal:
+                if section == 3:
+                    return "Bewertet"
                 return str(self._data.columns[section])
 
             if orientation == Qt.Vertical:
@@ -99,12 +115,12 @@ class OverviewTableModel(QtCore.QAbstractTableModel):
 
     def populateDataModel(self, tucanList, moodleList):
         entryList = pd.merge(tucanList, moodleList, on=["Nachname", "Vorname"])
-        columns = ["Nachname", "Vorname", "Abgabe", "Punkte", "Bestanden"]
+        columns = ["Nachname", "Vorname", "Punkte", "Bestanden", "Abgabe"]
         for idx, entry in entryList.iterrows():
-            newValues = [entry["Nachname"], entry["Vorname"], "Nein", 0, "Nein"]
+            newValues = [entry["Nachname"], entry["Vorname"], 0, "Nein", "Nein"]
             self._data.loc[entry["Matrikelnummer"], columns] = newValues
         self._data[self.criteriaColumnNames[:-2]] = 0
-        self._data[self.criteriaColumnNames[-2]] = "Keine Bemerkungen."
+        self._data[self.criteriaColumnNames[-2]] = ""
         self._data["Bewertet"] = False
         self._data.sort_values(by=["Nachname", "Vorname"], inplace=True)
         self.layoutChanged.emit()
@@ -131,10 +147,13 @@ class OverviewTableModel(QtCore.QAbstractTableModel):
             ),
         )
         self.updatePassStatus()
-        self.dataChanged.emit(self.index(matrikel, 3), self.index(matrikel, 3))
+        self.dataChanged.emit(self.index(matrikel, 2), self.index(matrikel, 2))
 
     def updateRemarkText(self, matrikel, text):
         self._data.at[matrikel, "Kommentar"] = text
+
+    def addTextToRemark(self, matrikel, text):
+        self._data.at[matrikel, "Kommentar"] += text
 
     def sort(self, column, order):
         self.layoutAboutToBeChanged.emit()

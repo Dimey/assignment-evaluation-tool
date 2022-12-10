@@ -230,4 +230,10 @@ class ASSController:
             self.overviewTableViewModel.updateValueForCriteria(
                 self.overviewTableViewModel.criteriaCount - 1, matrikel, failCount
             )
+            if failCount > 0:
+                self.overviewTableViewModel.addTextToRemark(
+                    matrikel,
+                    f"Matrikelnummer an {failCount} Stelle{'n' if failCount > 1 else ''} nicht korrekt angepasst.\n",
+                )
         self.updateSpinBoxList()
+        self.view.preCheckButton.setEnabled(False)

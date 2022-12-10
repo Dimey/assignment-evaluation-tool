@@ -323,7 +323,7 @@ class ASSView(QMainWindow):
         header.setSectionResizeMode(1, QHeaderView.Stretch)
         header.setSectionResizeMode(2, QHeaderView.ResizeToContents)
         header.setSectionResizeMode(3, QHeaderView.ResizeToContents)
-        header.setSectionResizeMode(4, QHeaderView.ResizeToContents)
+        # header.setSectionResizeMode(4, QHeaderView.ResizeToContents)
 
     # FUNCTIONAL STUFF
     def setActiveStatusOfWidget(self, widget, isActive):
