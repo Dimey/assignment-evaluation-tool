@@ -13,7 +13,7 @@ if __name__ == "__main__":
     app = QApplication(sys.argv)
     app.setStyle("fusion")
     app.setAttribute(Qt.AA_UseHighDpiPixmaps)
-    view = ASSView()
     model = ASSModel()
+    view = ASSView()
     controller = ASSController(model, view)
     sys.exit(app.exec())

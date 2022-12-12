@@ -53,7 +53,7 @@ class OverviewTableModel(QtCore.QAbstractTableModel):
         # make the points and bestanden align them to the center
         if role == Qt.TextAlignmentRole:
             if index.column() == 2:
-                return Qt.AlignRight | Qt.AlignVCenter
+                return Qt.AlignCenter | Qt.AlignVCenter
             if index.column() == 3:
                 return Qt.AlignCenter | Qt.AlignVCenter
 

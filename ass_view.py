@@ -14,6 +14,21 @@ class ASSView(QMainWindow):
 
     def __init__(self):
         super(ASSView, self).__init__()
+        # create a status bar
+        self.statusBar = self.statusBar()
+        self.statusBar.setStyleSheet(
+            "QStatusBar{border-top: 1px outset grey; font-size: 12px; color: grey;}"
+        )
+        # add a permanent widget to the status bar with grey text
+        label = QLabel(
+            f"© Technische Universität Darmstadt {chr(8226)} IIB {chr(8226)} 2022"
+        )
+        label.setStyleSheet("color: grey;")
+        self.statusBar.addPermanentWidget(label)
+        self.statusBar.messageChanged.connect(
+            lambda: self.statusBar.showMessage("Bereit")
+        )
+        self.statusBar.showMessage("Bereit")
 
     def createUI(self, contents, overviewTableModel):
         self.setWindowTitle("Assignment Evaluator")
@@ -377,6 +392,13 @@ class ASSView(QMainWindow):
                 + mainWindowSize.height() / 2
                 - progressWindowSize.height() / 2
             ),
+        )
+
+    def showTextInStatusBar(self, txt):
+        self.statusBar.messageChanged.disconnect()
+        self.statusBar.showMessage(txt, 3000)
+        self.statusBar.messageChanged.connect(
+            lambda: self.statusBar.showMessage("Bereit")
         )
 
     # SLOTS

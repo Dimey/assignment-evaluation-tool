@@ -1,10 +1,12 @@
 import json
 import os
 import sys
-from shutil import copytree
+from shutil import copytree, copy
 
 import pandas as pd
 from ass_pdf import PDFModel
+
+from PyQt5.QtWidgets import QFileDialog, QMessageBox
 
 
 class ASSModel:
@@ -19,9 +21,41 @@ class ASSModel:
     def __init__(self):
         super(ASSModel, self).__init__()
         self.workDir = os.path.abspath(os.getcwd())
+        self.checkContentDir()
+
+    def checkContentDir(self):
+        content_dir = ASSModel.resourcePath("content")
+        if not os.path.isdir(content_dir):
+            os.makedirs(content_dir)
+        while not os.path.isfile(f"{content_dir}/testat.json"):
+            msgBox = QMessageBox()
+            msgBox.setWindowTitle("Neuen Speicherstand anlegen?")
+            msgBox.setIcon(1)
+            msgBox.setText(f"Willkommen zum Testat-Tool des IIB.")
+            msgBox.setInformativeText(
+                "Keine Testatdatei gefunden.\nSoll eine Testatdatei ausgewählt werden?"
+            )
+            msgBox.setDetailedText("The details are as follows:")
+            msgBox.setStandardButtons(QMessageBox.Yes | QMessageBox.No)
+            msgBox.button(QMessageBox.Yes).setText("Ja")
+            msgBox.button(QMessageBox.No).setText("Nein")
+            msgBox.setDetailedText(f"Name der Testatdatei: 'testat.json'")
+
+            msgBox.exec()
+            if msgBox.result() == QMessageBox.Yes:
+                jsonFile = QFileDialog.getOpenFileName(
+                    msgBox,
+                    f"Öffne die JSON-Datei",
+                    filter=f"JSON-Dateien k(*.json) ;; Alle Dateien (*)",
+                )
+                if jsonFile[0] != "":
+                    copy(jsonFile[0], content_dir)
+
+            else:
+                sys.exit()
 
     def loadAssignmentDescription(self):
-        json_file_path = "json-mock-data/tasks.json"
+        json_file_path = "content/testat.json"
         with open(json_file_path, "r") as j:
             return json.loads(j.read())
 
@@ -75,6 +109,5 @@ class ASSModel:
         # )
 
     def getHTMLFromMatrikel(self, path):
-        # read html file and return it as string
         with open(path, "r", encoding="utf-8", errors="ignore") as f:
             return f.read()

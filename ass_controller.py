@@ -29,7 +29,6 @@ class ASSController:
         self.connectSignals()
 
     def initializeUI(self):
-        self.view.tucanButton.setFocus()  # has no effect yet
         self.view.updateWorkDirLineEdit(path=self.model.workDir)
 
     def connectSignals(self):
@@ -77,6 +76,9 @@ class ASSController:
                 self.view.updateLabel(
                     [self.view.moodleCountLabel], [self.model.moodleList.shape[0]]
                 )
+            self.view.showTextInStatusBar(
+                txt=f"{typeOfList.capitalize()}-Liste geladen."
+            )
             if hasattr(self.model, f"{otherList}List"):
                 self.overviewTableViewModel.populateDataModel(
                     self.model.tucanList, self.model.moodleList
@@ -88,6 +90,9 @@ class ASSController:
         if path:
             # copy selected folder (param1) to workdir/x (param2)
             pathList = self.model.copySubmissionsToDir(path, "GMV-Testat/Abgaben")
+            self.view.showTextInStatusBar(
+                txt=f"Abgaben nach .../GMV-Testat/Abgaben kopiert."
+            )
             self.overviewTableViewModel.populateDataModelWithPaths(pathList)
             self.view.updateLabel([self.view.submissionCountLabel], [len(pathList)])
             self.view.overviewTable.selectRow(0)
@@ -163,9 +168,11 @@ class ASSController:
             )
             self.view.overviewTable.selectRow(0)
             self.selectedMatrikel = self.overviewTableViewModel.getIndex(0)
+            self.view.showTextInStatusBar(txt="Speicherdatei erfolgreich geladen.")
 
     def saveFile(self):
         self.model.saveDataToJSON(self.overviewTableViewModel.getData())
+        self.view.showTextInStatusBar(txt="Dateien erfolgreich gespeichert.")
 
     def changePassThreshold(self):
         self.overviewTableViewModel.setPassThreshold(
@@ -187,6 +194,10 @@ class ASSController:
             self.assignmentDescription,
             self.overviewTableViewModel.passThreshold,
         )
+        if matrikel is False:
+            self.view.showTextInStatusBar(
+                txt=f"Einzelne PDF für {studentData['Nachname']}, {studentData['Vorname'][0]}. erzeugt."
+            )
 
     def batchExportToPDF(self, progress_callback):
         matrikelNumbers = self.overviewTableViewModel.getIndexOfEvaluatedStudents()
@@ -197,15 +208,13 @@ class ASSController:
             progress_callback.emit(progress, f"{idx+1} von {pdfCount} PDFs erzeugt.")
 
     def thread_complete(self):
-        print("BATCH EXPORT COMPLETE!")
+        self.view.showTextInStatusBar(
+            txt=f"PDFs wurden für alle bewerteten Studenten erzeugt."
+        )
 
-    # let the batchExportToPDF function run in a separate thread
     def batchExportToPDFThread(self):
         self.view.showProgressWindow("PDF Batch Export")
-        # Pass the function to execute
-        worker = PDFWorker(
-            self.batchExportToPDF
-        )  # Any other args, kwargs are passed to the run function
+        worker = PDFWorker(self.batchExportToPDF)
         worker.signals.finished.connect(self.thread_complete)
         worker.signals.progress.connect(self.view.progressWindow.updateProgressInfo)
 
@@ -236,4 +245,7 @@ class ASSController:
                     f"Matrikelnummer an {failCount} Stelle{'n' if failCount > 1 else ''} nicht korrekt angepasst.\n",
                 )
         self.updateSpinBoxList()
+        self.view.showTextInStatusBar(
+            txt="Vorprüfung durchgeführt. Ergebnisse aktualisiert."
+        )
         self.view.preCheckButton.setEnabled(False)
