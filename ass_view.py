@@ -8,6 +8,8 @@ from ass_progress_window import ProgressWindow
 import os
 import subprocess
 
+basedir = os.path.dirname(__file__)
+
 
 class ASSView(QMainWindow):
     """Generate docstring for configUI"""
@@ -40,7 +42,7 @@ class ASSView(QMainWindow):
         twoButtonLayout = QHBoxLayout()
         self.jumpToAssignmentButton = QPushButton("Zur Abgabe")
         self.jumpToAssignmentButton.setIcon(
-            QIcon("icons/arrowshape.turn.up.forward@4x.png")
+            QIcon(os.path.join(basedir, "icons", "arrowshape.turn.up.forward@4x.png"))
         )
         self.pdfExportButton = QPushButton("PDF Export")
         twoButtonLayout.addWidget(self.jumpToAssignmentButton)
@@ -260,7 +262,7 @@ class ASSView(QMainWindow):
         self.importGroupBox.setLayout(importLayout)
         return self.importGroupBox
 
-    def createLabelWithIcon(self, text, iconPath):
+    def createLabelWithIcon(self, text, iconName):
         # create hbox with label and icon
         labelWithIconLayout = QHBoxLayout()
         # center the label
@@ -274,7 +276,7 @@ class ASSView(QMainWindow):
         textLabel.setAlignment(Qt.AlignmentFlag.AlignCenter)
         labelWithIconLayout.addWidget(textLabel)
         label = QLabel(text)
-        icon = QIcon(iconPath)
+        icon = QIcon(os.path.join(basedir, "icons", iconName))
         label.setPixmap(icon.pixmap(20, 20))
         labelWithIconLayout.addWidget(label)
 
@@ -284,17 +286,17 @@ class ASSView(QMainWindow):
         # create a hbox with three labels with icons
         importInfoLayout = QHBoxLayout()
         tucanCountLabelLayout, self.tucanCountLabel = self.createLabelWithIcon(
-            "0", "icons/person.fill.checkmark@4x.png"
+            "0", "person.fill.checkmark@4x.png"
         )
         importInfoLayout.addLayout(tucanCountLabelLayout)
         moodleCountLabelLayout, self.moodleCountLabel = self.createLabelWithIcon(
-            "0", "icons/person.fill.checkmark@4x.png"
+            "0", "person.fill.checkmark@4x.png"
         )
         importInfoLayout.addLayout(moodleCountLabelLayout)
         (
             submissionCountLabelLayout,
             self.submissionCountLabel,
-        ) = self.createLabelWithIcon("0", "icons/folder.badge.person.crop@4x.png")
+        ) = self.createLabelWithIcon("0", "folder.badge.person.crop@4x.png")
         importInfoLayout.addLayout(submissionCountLabelLayout)
         return importInfoLayout
 
@@ -351,7 +353,7 @@ class ASSView(QMainWindow):
         return QFileDialog.getOpenFileName(
             self,
             f"Öffne die {ext}-Datei",
-            filter=f"{ext}-Dateien k(*{name}*.{ext}) ;; Alle Dateien (*)",
+            filter=f"{ext}-Dateien (*{name}*.{ext}) ;; Alle Dateien (*)",
         )
 
     def openFolderDialog(self, title):
