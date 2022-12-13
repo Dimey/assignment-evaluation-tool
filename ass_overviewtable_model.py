@@ -77,7 +77,8 @@ class OverviewTableModel(QtCore.QAbstractTableModel):
         return self._data.index[row]
 
     def getPath(self, matrikel):
-        return self._data.at[matrikel, "Pfad zur Abgabe"]
+        path = self._data.at[matrikel, "Pfad zur Abgabe"]
+        return os.path.dirname(path)
 
     def getPathsOfSubmittingStudents(self):
         return self._data[self._data["Abgabe"] == "Ja"]["Pfad zur Abgabe"].tolist()

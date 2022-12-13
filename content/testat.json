@@ -16,7 +16,7 @@
         "taskTitle": "Aufgabe 2: Dreitafelprojektion",
         "subTasks":[
             {"subTaskTitle": "Eck- und Innenpunkte", "subTaskMaxPoints": 8},
-            {"subTaskTitle": "Verbindungen außen", "subTaskMaxPoints": 4},
+            {"subTaskTitle": "Verbindungen aussen", "subTaskMaxPoints": 4},
             {"subTaskTitle": "Verbindungen innen", "subTaskMaxPoints": 9}
         ]
     },
@@ -30,7 +30,7 @@
 ],
 "penalties": [
     {
-        "penaltyTitle": "Pünktlichkeit" 
+        "penaltyTitle": "Puenktlichkeit" 
     },
     {
         "penaltyTitle": "Matrikelnr. angepasst"
