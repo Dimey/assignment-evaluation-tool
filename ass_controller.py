@@ -50,6 +50,7 @@ class ASSController:
         self.view.pdfExportButton.clicked.connect(self.exportToPDF)
         self.view.batchPDFExportButton.clicked.connect(self.batchExportToPDFThread)
         self.view.preCheckButton.clicked.connect(self.preCheck)
+        self.view.changeWorkDirButton.clicked.connect(self.changeWorkDir)
 
         # signals from model
         self.overviewTableViewModel.labelStat0Signal.connect(
@@ -119,6 +120,8 @@ class ASSController:
                     f"{self.overviewTableViewModel.getEvaluatedCount()} von {self.overviewTableViewModel.getSubmissionCount()}"
                 ],
             )
+            # table should be clickable now
+            self.view.overviewTable.setEnabled(True)
 
     def updateSpinBoxList(self):
         self.selectedMatrikel = self.overviewTableViewModel.getIndex(
@@ -259,3 +262,9 @@ class ASSController:
             txt="Vorprüfung durchgeführt. Ergebnisse aktualisiert."
         )
         self.view.preCheckButton.setEnabled(False)
+
+    def changeWorkDir(self, arg):
+        path = self.view.openFolderDialog("Wähle einen Ort für das Arbeitsverzeichnis")
+        if path:
+            self.model.aendereVerzeichnisPfad(path)
+            self.view.zeigeVerzeichnisPfad(path)

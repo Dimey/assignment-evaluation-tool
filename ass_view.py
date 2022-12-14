@@ -33,7 +33,7 @@ class ASSView(QMainWindow):
         self.statusBar.showMessage("Bereit")
 
     def createUI(self, contents, overviewTableModel):
-        self.setWindowTitle("Assignment Evaluator")
+        self.setWindowTitle("GMV I – Testat Tool")
         self.contents = contents
         self.spinBoxList = []
 
@@ -67,6 +67,8 @@ class ASSView(QMainWindow):
 
         # Evaluation Overview
         self.overviewTable = QTableView()
+        # table should not be clickable
+        self.overviewTable.setEnabled(False)
         # enable smooth scrolling
         self.overviewTable.setVerticalScrollMode(QAbstractItemView.ScrollPerPixel)
         self.overviewTable.setHorizontalScrollMode(QAbstractItemView.ScrollPerPixel)
@@ -100,7 +102,7 @@ class ASSView(QMainWindow):
         # TABLE TITLE
         self.tableTitleLabel = QLabel(f"Bewertungsübersicht")
         font = self.tableTitleLabel.font()
-        font.setPointSize(18)
+        font.setPixelSize(18)
         self.tableTitleLabel.setFont(font)
         self.tableTitleLabel.setAlignment(Qt.AlignmentFlag.AlignCenter)
         self.tableTitleLabel.setStyleSheet("font-weight: bold")
@@ -180,7 +182,7 @@ class ASSView(QMainWindow):
             "color: grey;background-color: lightgrey; border-radius: 5px; padding: 2px;"
         )
         font = subTaskMaxPointsLabel.font()
-        font.setPointSize(10)
+        font.setPixelSize(10)
         subTaskMaxPointsLabel.setFont(font)
         subTaskMaxPointsLabel.setFixedWidth(45)
 
@@ -413,6 +415,9 @@ class ASSView(QMainWindow):
         msgBox.setDetailedText(detailText)
         msgBox.setStandardButtons(QMessageBox.Ok)
         msgBox.exec_()
+
+    def zeigeVerzeichnisPfad(self, pfad):
+        self.workDirPathLineEdit.setText(pfad)
 
     # SLOTS
 

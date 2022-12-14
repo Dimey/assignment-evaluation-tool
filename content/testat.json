@@ -1,53 +1,53 @@
 {
 "courseTitle": "Geometrische Modellierung und Visualisierung I",
-"term": "WS 2022/23",
-"assignmentTitle": "Bewertung des Testats vom 12.12.2022",
+"term": "Wintersemester 2022/2023",
+"assignmentTitle": "Bewertung des Testats vom 12. Dezember 2022",
 "tasks": [
     {
         "taskTitle": "Aufgabe 1: Schattenwurf",
         "subTasks":[
-            {"subTaskTitle": "Schatteneckpunkte", "subTaskMaxPoints": 3},
-            {"subTaskTitle": "Vielecke dazwischen", "subTaskMaxPoints": 2},
-            {"subTaskTitle": "Verschneidungsfrei", "subTaskMaxPoints": 1},
-            {"subTaskTitle": "Korrekte Skulptur", "subTaskMaxPoints": 1}
+            {"subTaskTitle": "Schatteneckpunkte", "subTaskMaxPoints": 5},
+            {"subTaskTitle": "Vieleck(e) zwischen Schatteneckpunkten", "subTaskMaxPoints": 1},
+            {"subTaskTitle": "Vieleck(e) ist/sind verschneidungsfrei", "subTaskMaxPoints": 1}
         ]
     },
     {
         "taskTitle": "Aufgabe 2: Dreitafelprojektion",
         "subTasks":[
-            {"subTaskTitle": "Eck- und Innenpunkte", "subTaskMaxPoints": 8},
-            {"subTaskTitle": "Verbindungen aussen", "subTaskMaxPoints": 4},
-            {"subTaskTitle": "Verbindungen innen", "subTaskMaxPoints": 9}
+            {"subTaskTitle": "Ebene platziert", "subTaskMaxPoints": 1},
+            {"subTaskTitle": "Projizierte Eckpunkte", "subTaskMaxPoints": 8},
+            {"subTaskTitle": "Verbindungslinien ", "subTaskMaxPoints": 12}
         ]
     },
     {
         "taskTitle": "Aufgabe 3: Abbildung 3D auf 2D",
         "subTasks":[
-            {"subTaskTitle": "Eckpunkte", "subTaskMaxPoints": 8},
-            {"subTaskTitle": "Verbindungslinien", "subTaskMaxPoints": 13}
+            {"subTaskTitle": "Eckpunkte", "subTaskMaxPoints": 10},
+            {"subTaskTitle": "Verbindungslinien Gebäude", "subTaskMaxPoints": 12},
+			{"subTaskTitle": "Verbindungslinien Dach", "subTaskMaxPoints": 7}
         ]
     }
 ],
 "penalties": [
     {
-        "penaltyTitle": "Puenktlichkeit" 
+        "penaltyTitle": "Fristgerechte Abgabe" 
     },
     {
-        "penaltyTitle": "Matrikelnr. angepasst"
+        "penaltyTitle": "Anpassungen anhand Matrikelnummer"
     }
 ],
 "maxPoints": 30,
 "weights": [
-    1.5, 1, 1, 0.5, 0.5625, 0.4, 0.6, 0.5, 0.5, -1, -1
+    1.25, 2, 0.75, 1, 0.3, 0.3, 0.575, 0.25, 0.75, -1, -1
 ],
 "valueVariations": [
-    [-2, -2.1, -2.2, -2.3, -2.4, -2.5, -2.6, -2.7, -2.8, -2.9],
-    [6.9, 6.8, 6.7, 6.5, 6.4, 6.4, 6.3, 6.2, 6.1, 6],
-    [5, 5.1, 5.2, 5.3, 5.4, 5.5, 5.6, 5.7, 5.8, 5.9]
+	[5.0, 5.1, 5.2, 5.3, 5.4, 5.5, 5.6, 5.7, 5.8,5.9],
+	[9.9, 9.8, 9.7, 9.6, 9.5, 9.4, 9.3, 9.2, 9.1, 9.0],
+	[0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8,0.9]
 ],
 "searchStrings": {
-    "4": "z = $",
-    "5": "Augpunkt = ($,",
-    "6": "G</font></sub> = $" 
+	"4": "Augpunkt = (-4.3, 2, $)",
+    "5": ">F</font></sub> = $</td>",
+	"6": ">G</font></sub> = $</td>"
 }
 }
