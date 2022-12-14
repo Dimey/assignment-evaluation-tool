@@ -92,9 +92,9 @@ class ASSController:
         path = self.view.openFolderDialog("Wähle Abgaben-Ordner aus.")
         if path:
             # copy selected folder (param1) to workdir/x (param2)
-            pathList = self.model.copySubmissionsToDir(path, "GMV-Testat/Abgaben")
+            pathList = self.model.copySubmissionsToDir(path, "GMV I - Testat/Abgaben")
             self.view.showTextInStatusBar(
-                txt=f"Abgaben nach .../GMV-Testat/Abgaben kopiert."
+                txt=f"Abgaben nach .../GMV I - Testat/Abgaben kopiert."
             )
             pathErrors = self.overviewTableViewModel.populateDataModelWithPaths(
                 pathList
