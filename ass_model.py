@@ -101,7 +101,7 @@ class ASSModel:
     def exportToPDF(self, data, descr, th):
         img_dir = ASSModel.resourcePath("imgs")
         pdf = PDFModel(data, descr, th, img_dir)
-        path = self.workDir + "/GMV-Testat/_generierte PDF-Dateien"
+        path = self.workDir + "/GMV-Testat/Bewertungen"
         if not os.path.isdir(path):
             os.makedirs(path)
         pdf.output(f"{path}/{data.name}.pdf", "F")

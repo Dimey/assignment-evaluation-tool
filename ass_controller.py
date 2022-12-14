@@ -182,6 +182,7 @@ class ASSController:
             self.view.overviewTable.selectRow(0)
             self.selectedMatrikel = self.overviewTableViewModel.getIndex(0)
             self.view.showTextInStatusBar(txt="Speicherdatei erfolgreich geladen.")
+            self.view.overviewTable.setEnabled(True)
 
     def saveFile(self):
         self.model.saveDataToJSON(self.overviewTableViewModel.getData())
