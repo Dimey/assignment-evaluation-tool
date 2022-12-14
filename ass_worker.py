@@ -12,9 +12,9 @@ class WorkerSignals(QObject):
     progress = pyqtSignal(int, str)
 
 
-class PDFWorker(QRunnable):
+class Worker(QRunnable):
     def __init__(self, fn, *args, **kwargs):
-        super(PDFWorker, self).__init__()
+        super(Worker, self).__init__()
 
         self.fn = fn
         self.args = args

@@ -5,8 +5,7 @@ from ass_overviewtable_model import OverviewTableModel
 
 from PyQt5.QtCore import QThreadPool
 
-# import PDFWorker from ass_pdf_worker.py
-from ass_pdf_worker import PDFWorker
+from ass_worker import Worker
 
 
 class ASSController:
@@ -85,7 +84,7 @@ class ASSController:
                 self.overviewTableViewModel.populateDataModel(
                     self.model.tucanList, self.model.moodleList
                 )
-                # self.view.showTextInStatusBar(txt="Fuzzy Matching abgeschlossen.")
+                self.view.showTextInStatusBar(txt="Fuzzy Matching abgeschlossen.")
                 self.view.importSubmissionsButton.setEnabled(True)
 
     def importSubmissions(self):
@@ -228,7 +227,7 @@ class ASSController:
 
     def batchExportToPDFThread(self):
         self.view.showProgressWindow("PDF Batch Export")
-        worker = PDFWorker(self.batchExportToPDF)
+        worker = Worker(self.batchExportToPDF)
         worker.signals.finished.connect(self.thread_complete)
         worker.signals.progress.connect(self.view.progressWindow.updateProgressInfo)
 
