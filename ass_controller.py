@@ -80,9 +80,11 @@ class ASSController:
                 txt=f"{typeOfList.capitalize()}-Liste geladen."
             )
             if hasattr(self.model, f"{otherList}List"):
+                # self.view.showTextInStatusBar(txt="Fuzzy Matching...")
                 self.overviewTableViewModel.populateDataModel(
                     self.model.tucanList, self.model.moodleList
                 )
+                # self.view.showTextInStatusBar(txt="Fuzzy Matching abgeschlossen.")
                 self.view.importSubmissionsButton.setEnabled(True)
 
     def importSubmissions(self):
@@ -93,7 +95,15 @@ class ASSController:
             self.view.showTextInStatusBar(
                 txt=f"Abgaben nach .../GMV-Testat/Abgaben kopiert."
             )
-            self.overviewTableViewModel.populateDataModelWithPaths(pathList)
+            pathErrors = self.overviewTableViewModel.populateDataModelWithPaths(
+                pathList
+            )
+            if pathErrors:
+                self.view.createMessageBox(
+                    "Fehler in den Abgaben gefunden",
+                    "Bitte überprüfe in den unten aufgelisteten Pfaden die Abgaben auf Format-Fehler.",
+                    pathErrors,
+                )
             self.view.updateLabel([self.view.submissionCountLabel], [len(pathList)])
             self.view.overviewTable.selectRow(0)
             self.selectedMatrikel = self.overviewTableViewModel.getIndex(0)

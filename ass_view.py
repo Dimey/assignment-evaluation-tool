@@ -372,7 +372,7 @@ class ASSView(QMainWindow):
 
     def updateSpinBoxes(self, data):
         for idx, spinBox in enumerate(self.spinBoxList):
-            spinBox.setValue(data[idx])
+            spinBox.setValue(int(data[idx]))
         self.remarkTextEdit.setPlainText(data[-3])
         self.evaluationOverviewGroupBox.setChecked(not data[-1])
         self.setActiveStatusOfWidget(self.jumpToAssignmentButton, type(data[-2]) == str)
@@ -402,6 +402,17 @@ class ASSView(QMainWindow):
         self.statusBar.messageChanged.connect(
             lambda: self.statusBar.showMessage("Bereit")
         )
+
+    def createMessageBox(self, title, text, detailText):
+        # create a message box with a title and a detail text and OK button
+        msgBox = QMessageBox()
+        msgBox.setWindowTitle(title)
+        msgBox.setIcon(1)
+        msgBox.setText(title)
+        msgBox.setInformativeText(text)
+        msgBox.setDetailedText(detailText)
+        msgBox.setStandardButtons(QMessageBox.Ok)
+        msgBox.exec_()
 
     # SLOTS
 

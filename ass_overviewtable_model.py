@@ -1,6 +1,10 @@
 import pandas as pd
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtCore import Qt
+
+from fuzzywuzzy import fuzz
+from fuzzywuzzy import process
+
 import random
 import os
 
@@ -115,7 +119,44 @@ class OverviewTableModel(QtCore.QAbstractTableModel):
                 return str(self._data.index[section])
 
     def populateDataModel(self, tucanList, moodleList):
-        entryList = pd.merge(tucanList, moodleList, on=["Nachname", "Vorname"])
+        entryList = pd.DataFrame(columns=["Matrikelnummer", "Vorname", "Nachname"])
+        # iterate over the rows of the dataframe
+        for index, row in tucanList.iterrows():
+            # extractone to find the closest match for first name and last name
+            # concat the first and last name to get the full name
+            full_name = row["Vorname"] + " " + row["Nachname"]
+            # get the closest match for the full name
+            full_name = process.extractOne(
+                full_name,
+                moodleList["Vorname"] + " " + moodleList["Nachname"],
+                scorer=fuzz.token_set_ratio,
+                score_cutoff=80,
+            )
+            # if there is no match continue with the next row
+            if full_name is None:
+                continue
+            # get the index of the closest match
+            idx = moodleList[
+                (moodleList["Vorname"] + " " + moodleList["Nachname"]) == full_name[0]
+            ].index[0]
+            # get the first and last name of the closest match
+            first_name = moodleList.loc[idx, "Vorname"]
+            last_name = moodleList.loc[idx, "Nachname"]
+            # if the first and last name are not None add them to the entryList
+            if first_name is not None and last_name is not None:
+                # not using append because it is slow
+                entryList.loc[len(entryList)] = [
+                    row["Matrikelnummer"],
+                    first_name,
+                    last_name,
+                ]
+        # drop duplicates
+        entryList = entryList.drop_duplicates()
+        # drop rows with NaN values
+        entryList = entryList.dropna()
+        # convert the Matrikelnummer column to int
+        entryList["Matrikelnummer"] = entryList["Matrikelnummer"].astype(int)
+
         columns = ["Nachname", "Vorname", "Punkte", "Bestanden", "Abgabe"]
         for idx, entry in entryList.iterrows():
             newValues = [entry["Nachname"], entry["Vorname"], 0, "Nein", "Nein"]
@@ -127,10 +168,23 @@ class OverviewTableModel(QtCore.QAbstractTableModel):
         self.layoutChanged.emit()
 
     def populateDataModelWithPaths(self, pathList):
+        counter = 0
+        abgabenCounter = 0
+        pathErrorString = ""
         for path in pathList:
-            matrikel = int(os.path.splitext(os.path.basename(path))[0])
-            self._data.loc[matrikel, ["Abgabe", "Pfad zur Abgabe"]] = ["Ja", path]
+            try:
+                matrikel = int(os.path.splitext(os.path.basename(path))[0])
+                self._data.loc[matrikel, ["Abgabe", "Pfad zur Abgabe"]] = ["Ja", path]
+                abgabenCounter += 1
+            except ValueError:
+                pathErrorString += f"{path}\n\n"
+                counter += 1
+                continue
+        print(f"Skipped {counter} files.")
+        print(f"Found {abgabenCounter} submissions.")
         self.layoutChanged.emit()
+        if counter > 0:
+            return pathErrorString
 
     def updateValueForCriteria(self, nr, matrikel, value):
         self._data.at[matrikel, f"Criteria {nr}"] = value
