@@ -267,5 +267,5 @@ class ASSController:
     def changeWorkDir(self, arg):
         path = self.view.openFolderDialog("Wähle einen Ort für das Arbeitsverzeichnis")
         if path:
-            self.model.aendereVerzeichnisPfad(path)
-            self.view.zeigeVerzeichnisPfad(path)
+            self.model.changeWorkDir(path)
+            self.view.showWorkDir(path)

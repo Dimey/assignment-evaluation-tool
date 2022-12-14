@@ -122,8 +122,7 @@ class OverviewTableModel(QtCore.QAbstractTableModel):
         entryList = pd.DataFrame(columns=["Matrikelnummer", "Vorname", "Nachname"])
         # iterate over the rows of the dataframe
         for index, row in tucanList.iterrows():
-            # extractone to find the closest match for first name and last name
-            # concat the first and last name to get the full name
+            # extractOne to find the closest match for first name and last name
             full_name = row["Vorname"] + " " + row["Nachname"]
             # get the closest match for the full name
             full_name = process.extractOne(
@@ -139,10 +138,17 @@ class OverviewTableModel(QtCore.QAbstractTableModel):
             idx = moodleList[
                 (moodleList["Vorname"] + " " + moodleList["Nachname"]) == full_name[0]
             ].index[0]
-            # get the first and last name of the closest match
-            first_name = moodleList.loc[idx, "Vorname"]
-            last_name = moodleList.loc[idx, "Nachname"]
-            # if the first and last name are not None add them to the entryList
+            # choose for the names the longest match
+            first_name = (
+                moodleList.loc[idx, "Vorname"]
+                if len(moodleList.loc[idx, "Vorname"]) > len(row["Vorname"])
+                else row["Vorname"]
+            )
+            last_name = (
+                moodleList.loc[idx, "Nachname"]
+                if len(moodleList.loc[idx, "Nachname"]) > len(row["Nachname"])
+                else row["Nachname"]
+            )
             if first_name is not None and last_name is not None:
                 # not using append because it is slow
                 entryList.loc[len(entryList)] = [

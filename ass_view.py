@@ -416,8 +416,8 @@ class ASSView(QMainWindow):
         msgBox.setStandardButtons(QMessageBox.Ok)
         msgBox.exec_()
 
-    def zeigeVerzeichnisPfad(self, pfad):
-        self.workDirPathLineEdit.setText(pfad)
+    def showWorkDir(self, path):
+        self.workDirPathLineEdit.setText(path)
 
     # SLOTS
 
