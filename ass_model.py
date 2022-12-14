@@ -57,7 +57,7 @@ class ASSModel:
     def loadAssignmentDescription(self):
         content_dir = ASSModel.resourcePath("content")
         json_file_path = f"{content_dir}/testat.json"
-        with open(json_file_path, "r") as j:
+        with open(json_file_path, "r", encoding="utf-8") as j:
             return json.loads(j.read())
 
     def changeWorkDir(self, path):
