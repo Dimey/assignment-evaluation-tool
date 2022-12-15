@@ -67,8 +67,8 @@ class ASSView(QMainWindow):
 
         # Evaluation Overview
         self.overviewTable = QTableView()
-        # table should not be clickable
-        self.overviewTable.setEnabled(False)
+        # table should not be selectable
+        self.overviewTable.setSelectionMode(QAbstractItemView.NoSelection)
         # enable smooth scrolling
         self.overviewTable.setVerticalScrollMode(QAbstractItemView.ScrollPerPixel)
         self.overviewTable.setHorizontalScrollMode(QAbstractItemView.ScrollPerPixel)

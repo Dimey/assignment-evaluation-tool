@@ -4,6 +4,7 @@ from functools import partial
 from ass_overviewtable_model import OverviewTableModel
 
 from PyQt5.QtCore import QThreadPool
+from PyQt5.QtWidgets import QAbstractItemView
 
 from ass_worker import Worker
 
@@ -119,8 +120,7 @@ class ASSController:
                     f"{self.overviewTableViewModel.getEvaluatedCount()} von {self.overviewTableViewModel.getSubmissionCount()}"
                 ],
             )
-            # table should be clickable now
-            self.view.overviewTable.setEnabled(True)
+            self.view.overviewTable.setSelectionMode(QAbstractItemView.SingleSelection)
 
     def updateSpinBoxList(self):
         self.selectedMatrikel = self.overviewTableViewModel.getIndex(
@@ -181,7 +181,7 @@ class ASSController:
             self.view.overviewTable.selectRow(0)
             self.selectedMatrikel = self.overviewTableViewModel.getIndex(0)
             self.view.showTextInStatusBar(txt="Speicherdatei erfolgreich geladen.")
-            self.view.overviewTable.setEnabled(True)
+            self.view.overviewTable.setSelectionMode(QAbstractItemView.SingleSelection)
 
     def saveFile(self):
         self.model.saveDataToJSON(self.overviewTableViewModel.getData())
