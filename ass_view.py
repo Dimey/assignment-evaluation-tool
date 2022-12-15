@@ -171,13 +171,11 @@ class ASSView(QMainWindow):
         subTaskLabel = QLabel(subTask["subTaskTitle"])
         subTaskGrad = QSpinBox()
         subTaskGrad.setAlignment(Qt.AlignmentFlag.AlignRight)
-        subTaskGrad.setFixedWidth(40)
-        subTaskGrad.setValue(0)
-        subTaskGrad.setMaximum(subTask["subTaskMaxPoints"])
+        subTaskGrad.setFixedWidth(45)
+        subTaskGrad.setRange(0, subTask["subTaskMaxPoints"])
 
         self.spinBoxList.append(subTaskGrad)
         subTaskMaxPointsLabel = QLabel(f'max. {subTask["subTaskMaxPoints"]}')
-        # change color of subTaskMaxPointsLabel to grey
         subTaskMaxPointsLabel.setStyleSheet(
             "color: grey;background-color: lightgrey; border-radius: 5px; padding: 2px;"
         )
@@ -205,7 +203,7 @@ class ASSView(QMainWindow):
         # set the prefix to minus
         penaltySpinBox.setPrefix("-")
         penaltySpinBox.setAlignment(Qt.AlignmentFlag.AlignRight)
-        penaltySpinBox.setFixedWidth(40)
+        penaltySpinBox.setFixedWidth(45)
         self.spinBoxList.append(penaltySpinBox)
 
         penaltyLayout = QHBoxLayout()

@@ -30,6 +30,7 @@ class OverviewTableModel(QtCore.QAbstractTableModel):
         self.criteriaColumnNames.append("Kommentar")
         self.criteriaColumnNames.append("Pfad zur Abgabe")
         self.weights = descr["weights"]
+        self.examiners = descr["examiners"]
         if len(self.weights) != self.criteriaCount:
             raise ValueError("Number of weights does not match number of criteria.")
 
@@ -39,11 +40,26 @@ class OverviewTableModel(QtCore.QAbstractTableModel):
             if isinstance(value, float):
                 return f"{value:g}"
             if index.column() == 3:
-                if self._data.iloc[index.row(), -2] == True:
-                    return "\u2713"
+                if hasattr(self, 'examinersDict'):
+                    try:
+                        return self.examinersDict[self._data.index[index.row()]]
+                    except KeyError:
+                        return None
                 else:
                     return None
             return str(value)
+
+        # get the id of the student by using the index of the row
+        if role == Qt.UserRole:
+            return self._data.iloc[index.row(), 0].index[0]
+
+        # decorate with icon if student is evaluated
+        if role == Qt.DecorationRole:
+            if index.column() == 3:
+                if self._data.iloc[index.row(), -2] == True:
+                    return QtGui.QIcon("icons/checkmark.png")
+                else:
+                    return None
 
         # if student has no submission make the text light gray
         if role == Qt.ForegroundRole:
@@ -53,13 +69,16 @@ class OverviewTableModel(QtCore.QAbstractTableModel):
                 if self._data.iloc[index.row(), 2] < self.passThreshold:
                     return QtGui.QColor(191, 70, 39)
                 return QtGui.QColor(0, 128, 0)
+            # make last column (comment) light gray
+            if index.column() == 3:
+                return QtGui.QColor(100, 100, 100)
 
         # make the points and bestanden align them to the center
         if role == Qt.TextAlignmentRole:
             if index.column() == 2:
                 return Qt.AlignCenter | Qt.AlignVCenter
             if index.column() == 3:
-                return Qt.AlignCenter | Qt.AlignVCenter
+                return Qt.AlignLeft | Qt.AlignVCenter
 
         # make the points bold
         if role == Qt.FontRole and index.column() in [2, 3]:
@@ -75,6 +94,7 @@ class OverviewTableModel(QtCore.QAbstractTableModel):
 
     def setData(self, data):
         self._data = data
+        self.assignExaminersToStudents()
         self.layoutChanged.emit()
 
     def getIndex(self, row):
@@ -112,7 +132,7 @@ class OverviewTableModel(QtCore.QAbstractTableModel):
         if role == Qt.DisplayRole:
             if orientation == Qt.Horizontal:
                 if section == 3:
-                    return "Bewertet"
+                    return "Zu prüfen von"
                 return str(self._data.columns[section])
 
             if orientation == Qt.Vertical:
@@ -188,6 +208,7 @@ class OverviewTableModel(QtCore.QAbstractTableModel):
                 continue
         print(f"Skipped {counter} files.")
         print(f"Found {abgabenCounter} submissions.")
+        self.assignExaminersToStudents()
         self.layoutChanged.emit()
         if counter > 0:
             return pathErrorString
@@ -257,3 +278,14 @@ class OverviewTableModel(QtCore.QAbstractTableModel):
             (self._data["Bewertet"] == True) & (self._data["Abgabe"] == "Ja")
         ]["Punkte"].mean()
         return 0 if points != points else points
+
+    def assignExaminersToStudents(self):
+        matrikelNumbers = self.getIndexOfSubmittingStudents()
+        numExaminers = len(self.examiners)
+        numStudents = len(matrikelNumbers)
+        numStudentsPerExaminer = round(numStudents / numExaminers)
+        self.examinersDict = {
+            matrikelNumbers[i]: self.examiners[i // numStudentsPerExaminer]
+            for i in range(numStudents)
+        }
+        
