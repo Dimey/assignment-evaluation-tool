@@ -4,7 +4,7 @@ import sys
 from shutil import copytree, copy
 
 import pandas as pd
-from ass_pdf import PDFModel
+from model.ass_pdf import PDFModel
 
 from PyQt5.QtWidgets import QFileDialog, QMessageBox
 
@@ -24,7 +24,7 @@ class ASSModel:
         self.checkContentDir()
 
     def checkContentDir(self):
-        content_dir = ASSModel.resourcePath("content")
+        content_dir = ASSModel.resourcePath("../content")
         if not os.path.isdir(content_dir):
             os.makedirs(content_dir)
         while not os.path.isfile(f"{content_dir}/testat.json"):
@@ -55,7 +55,7 @@ class ASSModel:
                 sys.exit()
 
     def loadAssignmentDescription(self):
-        content_dir = ASSModel.resourcePath("content")
+        content_dir = ASSModel.resourcePath("../content")
         json_file_path = f"{content_dir}/testat.json"
         with open(json_file_path, "r", encoding="utf-8") as j:
             return json.loads(j.read())
@@ -99,7 +99,7 @@ class ASSModel:
             return pd.read_json("data.json")
 
     def exportToPDF(self, data, descr, th):
-        img_dir = ASSModel.resourcePath("imgs")
+        img_dir = ASSModel.resourcePath("../imgs")
         pdf = PDFModel(data, descr, th, img_dir)
         path = self.workDir + "/GMV I - Testat/Bewertungen"
         if not os.path.isdir(path):

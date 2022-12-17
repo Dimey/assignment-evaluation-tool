@@ -3,7 +3,7 @@ from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
 from PyQt5 import QtCore, QtGui, QtWidgets
 
-from ass_progress_window import ProgressWindow
+from view.ass_progress_window import ProgressWindow
 
 import os
 import subprocess

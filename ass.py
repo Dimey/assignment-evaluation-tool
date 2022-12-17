@@ -4,10 +4,10 @@ from PyQt5.QtWidgets import QApplication
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QIcon
 
-from ass_controller import ASSController
-from ass_model import ASSModel
-from ass_view import ASSView
-
+# import ASSController from the controller folder
+from controller.ass_controller import ASSController
+from model.ass_model import ASSModel
+from view.ass_view import ASSView
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)

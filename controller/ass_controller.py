@@ -1,12 +1,12 @@
 import math
 
 from functools import partial
-from ass_overviewtable_model import OverviewTableModel
+from model.ass_overviewtable_model import OverviewTableModel
 
 from PyQt5.QtCore import QThreadPool
 from PyQt5.QtWidgets import QAbstractItemView
 
-from ass_worker import Worker
+from model.ass_worker import Worker
 
 
 class ASSController:
@@ -106,7 +106,6 @@ class ASSController:
                     pathErrors,
                 )
             self.view.updateLabel([self.view.submissionCountLabel], [len(pathList)])
-            self.view.overviewTable.selectRow(0)
             self.selectedMatrikel = self.overviewTableViewModel.getIndex(0)
             self.view.evaluationOverviewGroupBox.setEnabled(True)
             self.view.saveButton.setEnabled(True)
@@ -121,6 +120,7 @@ class ASSController:
                 ],
             )
             self.view.overviewTable.setSelectionMode(QAbstractItemView.SingleSelection)
+            self.view.overviewTable.selectRow(0)
 
     def updateSpinBoxList(self):
         self.selectedMatrikel = self.overviewTableViewModel.getIndex(
@@ -178,10 +178,10 @@ class ASSController:
                     f"{self.overviewTableViewModel.getAvgPoints():.1f}",
                 ],
             )
+            self.view.overviewTable.setSelectionMode(QAbstractItemView.SingleSelection)
             self.view.overviewTable.selectRow(0)
             self.selectedMatrikel = self.overviewTableViewModel.getIndex(0)
             self.view.showTextInStatusBar(txt="Speicherdatei erfolgreich geladen.")
-            self.view.overviewTable.setSelectionMode(QAbstractItemView.SingleSelection)
 
     def saveFile(self):
         self.model.saveDataToJSON(self.overviewTableViewModel.getData())
