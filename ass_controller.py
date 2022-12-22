@@ -246,7 +246,7 @@ class ASSController:
             failCount = 0
             for idx, (key, value) in enumerate(searchStrings.items()):
                 pos = int(str(matrikel)[int(key)])
-                searchString = value.replace("$", str(valueVariations[idx][pos]))
+                searchString = value.replace("$", f"{valueVariations[idx][pos]:g}")
                 if cp_html.find(searchString) == -1:
                     failCount += 1
             self.overviewTableViewModel.updateValueForCriteria(
