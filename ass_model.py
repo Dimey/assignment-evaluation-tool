@@ -104,7 +104,7 @@ class ASSModel:
         path = self.workDir + "/GMV I - Testat/Bewertungen"
         if not os.path.isdir(path):
             os.makedirs(path)
-        pdf.output(f"{path}/{data.name}.pdf", "F")
+        pdf.output(f"{path}/{data['Nachname']}_{data['Vorname']}_{data.name}.pdf", "F")
 
         # pdf.output(
         #     f"{path}{'/' if path != '' else 'GMV Testat Tool/Studenten ohne Abgabe/'}{data.index[0]}.pdf"
