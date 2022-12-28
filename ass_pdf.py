@@ -5,10 +5,6 @@ from fpdf import FPDF
 
 
 class PDFModel(FPDF):
-    @classmethod
-    def idCheck(cls, kp, werte):
-        pass
-
     def __init__(self, data, descr, th, img_dir):
         super().__init__("P", "mm")
         self.data = data

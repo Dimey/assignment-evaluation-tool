@@ -7,6 +7,12 @@ class ProgressWindow(QWidget):
         super(ProgressWindow, self).__init__()
         self.setWindowTitle(title)
         self.progressBar = QProgressBar(self)
+        self.progressBar.setStyleSheet(
+            "QProgressBar {border: 1px solid grey; border-radius: 5px; text-align: center;}"
+        )
+        self.progressBar.setFormat("")
+        self.progressBar.setFixedHeight(10)
+
         self.progressLabel = QLabel(self)
         self.progressBar.setValue(0)
         self.progressLabel.setText("")
