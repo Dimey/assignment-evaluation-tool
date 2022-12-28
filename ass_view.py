@@ -298,6 +298,15 @@ class ASSView(QMainWindow):
             self.submissionCountLabel,
         ) = self.createLabelWithIcon("0", "folder.badge.person.crop@4x.png")
         importInfoLayout.addLayout(submissionCountLabelLayout)
+        # add label to layout
+        testatTitleLabel = QLabel(f'{self.contents["assignmentTitle"]}')
+        # labels text should be in two lines
+        testatTitleLabel.setWordWrap(True)
+        testatTitleLabel.setStyleSheet("color: grey;")
+        # set font size to pixelsize 10
+        testatTitleLabel.setFont(QFont("Arial", 10))
+        testatTitleLabel.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        importInfoLayout.addWidget(testatTitleLabel)
         return importInfoLayout
 
     def createImportButtons(self):
@@ -310,6 +319,12 @@ class ASSView(QMainWindow):
         self.importSubmissionsButton = QPushButton("Abgaben")
         self.importSubmissionsButton.setEnabled(False)
         importButtonsLayout.addWidget(self.importSubmissionsButton)
+        self.newTestatButton = QPushButton("Neues Testat")
+        self.newTestatButton.setStyleSheet(
+            "QPushButton {background-color: rgb(215, 77, 62); color: white;}"
+            "QPushButton:disabled {background-color: rgb(233, 122, 112); color: white;}"
+        )
+        importButtonsLayout.addWidget(self.newTestatButton)
         return importButtonsLayout
 
     def createStatsGroupBox(self):
