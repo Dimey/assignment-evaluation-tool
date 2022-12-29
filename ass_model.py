@@ -34,7 +34,8 @@ class ASSModel:
             msgBox.setText(f"Willkommen zum Testat-Tool des IIB.")
             msgBox.setInformativeText(
                 f"Soll eine (neue) Testatdatei ausgewählt werden?\n\n"
-                f"Achtung: Der gmv1_testat Ordner im Arbeitsverzeichnis wird dabei überschrieben!"
+                f"Achtung:\n· Der Abgaben-Ordner wird gelöscht.\n"
+                f"· Die Speicherdatei 'data.json' wird gelöscht."
             )
             msgBox.setStandardButtons(QMessageBox.Yes | QMessageBox.No)
             msgBox.button(QMessageBox.Yes).setText("Ja")
@@ -42,6 +43,7 @@ class ASSModel:
             msgBox.setDetailedText(f"Name der Testatdatei: 'testat.json'")
 
             msgBox.exec()
+
             if msgBox.result() == QMessageBox.Yes:
                 jsonFile = QFileDialog.getOpenFileName(
                     msgBox,

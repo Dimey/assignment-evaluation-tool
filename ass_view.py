@@ -23,7 +23,7 @@ class ASSView(QMainWindow):
         )
         # add a permanent widget to the status bar with grey text
         label = QLabel(
-            f"© Technische Universität Darmstadt {chr(8226)} IIB {chr(8226)} 2022"
+            f"© Technische Universität Darmstadt {chr(8226)} IIB {chr(8226)} 2023"
         )
         label.setStyleSheet("color: grey;")
         self.statusBar.addPermanentWidget(label)
@@ -39,14 +39,20 @@ class ASSView(QMainWindow):
 
         # Evaluation Detail Panel
         evaluationOverviewLayout = QVBoxLayout()
-        twoButtonLayout = QHBoxLayout()
+        threeButtonEvalLayout = QHBoxLayout()
         self.jumpToAssignmentButton = QPushButton("Zur Abgabe")
         self.jumpToAssignmentButton.setIcon(
             QIcon(os.path.join(basedir, "icons", "arrowshape.turn.up.forward@4x.png"))
         )
         self.pdfExportButton = QPushButton("PDF Export")
-        twoButtonLayout.addWidget(self.jumpToAssignmentButton)
-        twoButtonLayout.addWidget(self.pdfExportButton)
+        self.setMaxPointsButton = QPushButton("Max. Punkte")
+        self.setMaxPointsButton.setStyleSheet(
+            "QPushButton {background-color: rgb(215, 77, 62); color: white;}"
+            "QPushButton:disabled {background-color: rgb(233, 122, 112); color: white;}"
+        )
+        threeButtonEvalLayout.addWidget(self.jumpToAssignmentButton)
+        threeButtonEvalLayout.addWidget(self.pdfExportButton)
+        threeButtonEvalLayout.addWidget(self.setMaxPointsButton)
 
         taskGroupBoxes = self.createAllTaskGroupBoxes(self.contents["tasks"])
         for taskGroupBox in taskGroupBoxes:
@@ -59,7 +65,7 @@ class ASSView(QMainWindow):
         self.remarkTextEdit.setPlaceholderText("Bemerkungen")
         # add label to layout
         evaluationOverviewLayout.addWidget(self.remarkTextEdit)
-        evaluationOverviewLayout.addLayout(twoButtonLayout)
+        evaluationOverviewLayout.addLayout(threeButtonEvalLayout)
         self.evaluationOverviewGroupBox = GroupBox("Bewertung abgeschlossen")
         self.evaluationOverviewGroupBox.setCheckable(True)
         self.evaluationOverviewGroupBox.setLayout(evaluationOverviewLayout)
