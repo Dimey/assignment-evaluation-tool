@@ -21,21 +21,21 @@ class ASSModel:
     def __init__(self):
         super(ASSModel, self).__init__()
         self.workDir = os.path.abspath(os.getcwd())
-        self.checkContentDir()
+        self.loadTestatFile(appStart=True)
 
-    def checkContentDir(self):
+    def loadTestatFile(self, appStart):
         content_dir = ASSModel.resourcePath("content")
         if not os.path.isdir(content_dir):
             os.makedirs(content_dir)
-        while not os.path.isfile(f"{content_dir}/testat.json"):
+        while not os.path.isfile(f"{content_dir}/testat.json") or not appStart:
             msgBox = QMessageBox()
-            msgBox.setWindowTitle("Neuen Speicherstand anlegen?")
+            msgBox.setWindowTitle("Willkommen zum Testat-Tool des IIB.")
             msgBox.setIcon(1)
             msgBox.setText(f"Willkommen zum Testat-Tool des IIB.")
             msgBox.setInformativeText(
-                "Keine Testatdatei gefunden.\nSoll eine Testatdatei ausgewählt werden?"
+                f"Soll eine (neue) Testatdatei ausgewählt werden?\n\n"
+                f"Achtung: Der gmv1_testat Ordner im Arbeitsverzeichnis wird dabei überschrieben!"
             )
-            msgBox.setDetailedText("The details are as follows:")
             msgBox.setStandardButtons(QMessageBox.Yes | QMessageBox.No)
             msgBox.button(QMessageBox.Yes).setText("Ja")
             msgBox.button(QMessageBox.No).setText("Nein")
@@ -46,13 +46,27 @@ class ASSModel:
                 jsonFile = QFileDialog.getOpenFileName(
                     msgBox,
                     f"Öffne die JSON-Datei",
-                    filter=f"JSON-Dateien k(*.json) ;; Alle Dateien (*)",
+                    filter=f"JSON-Datei (testat.json) ;; Alle Dateien (*)",
                 )
                 if jsonFile[0] != "":
                     copy(jsonFile[0], content_dir)
+                    if os.path.isdir(f"{self.workDir}/gmv1_testat"):
+                        # remove dir and all contents
+                        for root, dirs, files in os.walk(
+                            f"{self.workDir}/gmv1_testat", topdown=False
+                        ):
+                            for name in files:
+                                os.remove(os.path.join(root, name))
+                            for name in dirs:
+                                os.rmdir(os.path.join(root, name))
+                    os.execl(sys.executable, sys.executable, *sys.argv)
 
             else:
-                sys.exit()
+                if appStart:
+                    sys.exit()
+                else:
+                    msgBox.close()
+                    break
 
     def loadAssignmentDescription(self):
         content_dir = ASSModel.resourcePath("content")
@@ -101,14 +115,10 @@ class ASSModel:
     def exportToPDF(self, data, descr, th):
         img_dir = ASSModel.resourcePath("imgs")
         pdf = PDFModel(data, descr, th, img_dir)
-        path = self.workDir + "/GMV I - Testat/Bewertungen"
+        path = self.workDir + "/gmv1_testat/Bewertungen"
         if not os.path.isdir(path):
             os.makedirs(path)
         pdf.output(f"{path}/{data['Nachname']}_{data['Vorname']}_{data.name}.pdf", "F")
-
-        # pdf.output(
-        #     f"{path}{'/' if path != '' else 'GMV Testat Tool/Studenten ohne Abgabe/'}{data.index[0]}.pdf"
-        # )
 
     def getHTMLFromMatrikel(self, path):
         with open(path, "r", encoding="utf-8", errors="ignore") as f:

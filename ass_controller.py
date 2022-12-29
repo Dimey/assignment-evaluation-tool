@@ -51,6 +51,7 @@ class ASSController:
         self.view.batchPDFExportButton.clicked.connect(self.batchExportToPDFThread)
         self.view.preCheckButton.clicked.connect(self.preCheck)
         self.view.changeWorkDirButton.clicked.connect(self.changeWorkDir)
+        self.view.newTestatButton.clicked.connect(self.loadTestatFile)
 
         # signals from model
         self.overviewTableViewModel.labelStat0Signal.connect(
@@ -92,9 +93,9 @@ class ASSController:
         path = self.view.openFolderDialog("Wähle Abgaben-Ordner aus.")
         if path:
             # copy selected folder (param1) to workdir/x (param2)
-            pathList = self.model.copySubmissionsToDir(path, "GMV I - Testat/Abgaben")
+            pathList = self.model.copySubmissionsToDir(path, "gmv1_testat/Abgaben")
             self.view.showTextInStatusBar(
-                txt=f"Abgaben nach .../GMV I - Testat/Abgaben kopiert."
+                txt=f"Abgaben nach .../gmv1_testat/Abgaben kopiert."
             )
             pathErrors = self.overviewTableViewModel.populateDataModelWithPaths(
                 pathList
@@ -268,3 +269,6 @@ class ASSController:
         if path:
             self.model.changeWorkDir(path)
             self.view.showWorkDir(path)
+
+    def loadTestatFile(self):
+        self.model.loadTestatFile(appStart=False)

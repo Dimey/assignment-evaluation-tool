@@ -29,7 +29,7 @@ MANIFEST
 
 # Development and testing data
 excel-files/
-GMV I - Testat/
+gmv1_testat/
 data.json
 playground.ipynb
 
