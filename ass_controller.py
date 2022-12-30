@@ -52,6 +52,7 @@ class ASSController:
         self.view.preCheckButton.clicked.connect(self.preCheck)
         self.view.changeWorkDirButton.clicked.connect(self.changeWorkDir)
         self.view.newTestatButton.clicked.connect(self.loadTestatFile)
+        self.view.setMaxPointsButton.clicked.connect(self.setMaxPoints)
 
         # signals from model
         self.overviewTableViewModel.labelStat0Signal.connect(
@@ -272,3 +273,6 @@ class ASSController:
 
     def loadTestatFile(self):
         self.model.loadTestatFile(appStart=False)
+        
+    def setMaxPoints(self):
+        self.view.setMaxPoints(self.selectedMatrikel)

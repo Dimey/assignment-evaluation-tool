@@ -31,7 +31,7 @@ MANIFEST
 excel-files/
 gmv1_testat/
 data.json
-content/testat.json
+content/
 playground.ipynb
 
 # PyInstaller

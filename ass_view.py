@@ -438,6 +438,11 @@ class ASSView(QMainWindow):
     def showWorkDir(self, path):
         self.workDirPathLineEdit.setText(path)
 
+    def setMaxPoints(self, matrikel):
+        for spinBox in self.spinBoxList:
+            if spinBox.maximum() != 99:
+                spinBox.setValue(spinBox.maximum())
+
     # SLOTS
 
 
